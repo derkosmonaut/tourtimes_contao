@@ -1,0 +1,25 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Derkosmonaut\TourTimesBundle\Resolver\:
+        resource: ../src/Resolver/
+        exclude: ../src/Resolver/Model/
+
+    Derkosmonaut\TourTimesBundle\Output\:
+        resource: ../src/Output/
+
+    Derkosmonaut\TourTimesBundle\Repository\:
+        resource: ../src/Repository/
+
+    Derkosmonaut\TourTimesBundle\EventListener\:
+        resource: ../src/EventListener/
+
+    Derkosmonaut\TourTimesBundle\Dca\:
+        resource: ../src/Dca/
+        public: true
+
+    Derkosmonaut\TourTimesBundle\Controller\:
+        resource: ../src/Controller/
+        public: true

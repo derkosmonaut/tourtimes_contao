@@ -1,0 +1,55 @@
+{% extends "@Contao/frontend_module/_base.html.twig" %}
+
+{% use "@Contao/component/_stylesheet.html.twig" %}
+
+{#
+  Termine des aktuellen Tages. Jeder Eintrag trägt den Zeitpunkt, ab dem er
+  ausgeblendet wird (data-tourtimes-hide-at, Unix-Zeit). tourtimes.js blendet ihn
+  dann ohne Neuladen aus und lädt die Seite nach Mitternacht neu (Infomonitor).
+#}
+{% block content %}
+  {% add "tourtimes_css" to stylesheets %}
+    {% with {file: asset('bundles/derkosmonauttourtimes/css/tourtimes.css')} %}
+      {{ block('stylesheet_component') }}
+    {% endwith %}
+  {% endadd %}
+
+  {% add "tourtimes_js" to body %}
+    <script src="{{ asset('bundles/derkosmonauttourtimes/js/tourtimes.js') }}" defer></script>
+  {% endadd %}
+
+  <div class="tourtimes-today" data-tourtimes-today data-tourtimes-reload-at="{{ reload_at|date('U') }}">
+    <ol class="tourtimes-today__list">
+      {% for entry in entries %}
+        <li class="tourtimes-today__item tourtimes-today__item--{{ entry.state }}" data-tourtimes-hide-at="{{ entry.hideAt|date('U') }}">
+          <time class="tourtimes-today__time" datetime="{{ entry.start|date('Y-m-d\\TH:i') }}">
+            {{- entry.start|date('H:i') }}{% if labels.time_suffix %} {{ labels.time_suffix }}{% endif -%}
+          </time>
+
+          <span class="tourtimes-today__offer">
+            {%- if entry.offer.url %}<a href="{{ entry.offer.url }}">{{ entry.offer.title }}</a>{% else %}{{ entry.offer.title }}{% endif -%}
+          </span>
+
+          {% if entry.offer.meetingPoint %}
+            <span class="tourtimes-today__meeting-point">{{ labels.meeting_point }}: {{ entry.offer.meetingPoint }}</span>
+          {% endif %}
+
+          {% if entry.cancelled %}
+            <span class="tourtimes-badge tourtimes-badge--cancelled">{{ labels.cancelled }}</span>
+          {% elseif entry.changed %}
+            <span class="tourtimes-badge tourtimes-badge--changed">{{ labels.changed }}</span>
+            {% if entry.originalStart %}<span class="tourtimes-date__original">{{ labels.changed_from }} {{ entry.originalStart|date('H:i') }}</span>{% endif %}
+          {% elseif entry.extra %}
+            <span class="tourtimes-badge tourtimes-badge--extra">{{ labels.extra }}</span>
+          {% endif %}
+
+          {% for note in entry.notes %}
+            <span class="tourtimes-date__note">{{ note }}</span>
+          {% endfor %}
+        </li>
+      {% endfor %}
+    </ol>
+
+    <p class="tourtimes-today__empty"{% if entries is not empty %} hidden{% endif %}>{{ empty_text }}</p>
+  </div>
+{% endblock %}

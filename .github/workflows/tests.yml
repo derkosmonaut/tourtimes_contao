@@ -1,0 +1,42 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.5']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+
+      # Der Resolver ist reines PHP: Composer-Plugins (z. B. von Contao) und
+      # Plattform-Anforderungen werden für die Tests nicht gebraucht.
+      - run: composer install --no-interaction --prefer-dist --no-plugins --ignore-platform-reqs
+
+      - run: vendor/bin/phpunit
+
+      - name: PHP-Syntax prüfen
+        run: find src contao config -name '*.php' -print0 | xargs -0 -n1 php -l
+
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: composer:v2
+
+      - run: composer install --no-interaction --prefer-dist --no-plugins --ignore-platform-reqs
+
+      - run: vendor/bin/phpstan analyse --no-progress

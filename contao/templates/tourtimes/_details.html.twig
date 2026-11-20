@@ -1,0 +1,9 @@
+{# Treffpunkt, Dauer, Preis und Sprache eines Angebots. Erwartet: offer, labels #}
+{% if offer.meetingPoint or offer.duration or offer.price or offer.language %}
+  <dl class="tourtimes-details">
+    {% if offer.meetingPoint %}<dt>{{ labels.meeting_point }}</dt><dd>{{ offer.meetingPoint }}</dd>{% endif %}
+    {% if offer.duration %}<dt>{{ labels.duration }}</dt><dd>{{ offer.duration }} {{ labels.minutes }}</dd>{% endif %}
+    {% if offer.price %}<dt>{{ labels.price }}</dt><dd>{{ offer.price }}</dd>{% endif %}
+    {% if offer.language %}<dt>{{ labels.language }}</dt><dd>{{ offer.language }}</dd>{% endif %}
+  </dl>
+{% endif %}

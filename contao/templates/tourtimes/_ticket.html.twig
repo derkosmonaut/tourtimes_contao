@@ -1,0 +1,6 @@
+{# Ticketlink eines Angebots. Erwartet: offer, labels #}
+{% if offer.ticketUrl %}
+  <a class="tourtimes-ticket" href="{{ offer.ticketUrl|insert_tag }}" target="_blank" rel="noopener">
+    {{- offer.ticketLabel ?: labels.tickets -}}
+  </a>
+{% endif %}

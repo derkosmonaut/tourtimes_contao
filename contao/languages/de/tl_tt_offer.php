@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+$GLOBALS['TL_LANG']['tl_tt_offer']['title'] = ['Titel', 'Name des Angebots, z. B. „Domführung“.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['alias'] = ['Alias', 'URL-Teil der Detailseite. Bleibt das Feld leer, wird er aus dem Titel erzeugt.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['teaser'] = ['Kurzbeschreibung', 'Erscheint in der Liste.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['description'] = ['Beschreibung', 'Ausführlicher Text für die Detailansicht.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['singleSRC'] = ['Bild', 'Optionales Bild zum Angebot.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['meeting_point'] = ['Treffpunkt', 'Z. B. „Hauptportal“.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['duration'] = ['Dauer in Minuten', 'Gilt für alle Termine ohne eigenes Ende. 0 = ohne Ende.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['price'] = ['Preis', 'Freitext, z. B. „12 €, ermäßigt 8 €“.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['language'] = ['Sprache', 'Z. B. „Deutsch“. Abweichungen einzelner Termine als Hinweis am Zeitslot.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['ticket_url'] = ['Ticketlink', 'Adresse des Ticketshops.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['ticket_label'] = ['Linktext', 'Leer = „Tickets“.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['published'] = ['Veröffentlicht', 'Nur veröffentlichte Angebote erscheinen im Frontend.'];
+
+$GLOBALS['TL_LANG']['tl_tt_offer']['title_legend'] = 'Angebot';
+$GLOBALS['TL_LANG']['tl_tt_offer']['text_legend'] = 'Texte';
+$GLOBALS['TL_LANG']['tl_tt_offer']['image_legend'] = 'Bild';
+$GLOBALS['TL_LANG']['tl_tt_offer']['details_legend'] = 'Details';
+$GLOBALS['TL_LANG']['tl_tt_offer']['ticket_legend'] = 'Tickets';
+$GLOBALS['TL_LANG']['tl_tt_offer']['publish_legend'] = 'Veröffentlichung';
+
+$GLOBALS['TL_LANG']['tl_tt_offer']['new'] = ['Neues Angebot', 'Ein neues Angebot anlegen'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['edit'] = ['Angebot bearbeiten', 'Angebot ID %s bearbeiten'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['schedules'] = ['Pläne', 'Standard- und Saisonpläne von Angebot ID %s'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['exceptions'] = ['Ausnahmen', 'Ausnahmen von Angebot ID %s'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['cancellations'] = ['Spontane Absagen', 'Spontane Absagen von Angebot ID %s'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['copy'] = ['Angebot duplizieren', 'Angebot ID %s duplizieren'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['toggle'] = ['Veröffentlichen', 'Angebot ID %s veröffentlichen/verbergen'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['delete'] = ['Angebot löschen', 'Angebot ID %s löschen'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['show'] = ['Details', 'Details von Angebot ID %s'];

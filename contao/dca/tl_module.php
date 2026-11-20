@@ -1,0 +1,67 @@
+<?php
+
+declare(strict_types=1);
+
+$dca = &$GLOBALS['TL_DCA']['tl_module'];
+
+// Liste aller Angebote mit regelmäßigen Zeiten und den nächsten Terminen
+$dca['palettes']['tourtimes_list'] =
+    '{title_legend},name,headline,type;'
+    .'{tourtimes_legend},tourtimes_offers,tourtimes_upcoming,tourtimes_show_cancelled,jumpTo;'
+    .'{image_legend:hide},imgSize;'
+    .'{template_legend:hide},customTpl;'
+    .'{protected_legend:hide},protected;'
+    .'{expert_legend:hide},guests,cssID';
+
+// Termine des aktuellen Tages, z. B. für den Infomonitor an der Kasse
+$dca['palettes']['tourtimes_today'] =
+    '{title_legend},name,headline,type;'
+    .'{tourtimes_legend},tourtimes_offers,tourtimes_offset,tourtimes_show_cancelled,tourtimes_empty,jumpTo;'
+    .'{template_legend:hide},customTpl;'
+    .'{protected_legend:hide},protected;'
+    .'{expert_legend:hide},guests,cssID';
+
+// Detailansicht eines Angebots (Alias aus der URL)
+$dca['palettes']['tourtimes_reader'] =
+    '{title_legend},name,type;'
+    .'{tourtimes_legend},tourtimes_upcoming,tourtimes_show_cancelled;'
+    .'{image_legend:hide},imgSize;'
+    .'{template_legend:hide},customTpl;'
+    .'{protected_legend:hide},protected;'
+    .'{expert_legend:hide},guests,cssID';
+
+$dca['fields']['tourtimes_offers'] = [
+    'inputType' => 'checkboxWizard',
+    'foreignKey' => 'tl_tt_offer.title',
+    'eval' => ['multiple' => true, 'tl_class' => 'clr'],
+    'sql' => 'blob NULL',
+];
+
+$dca['fields']['tourtimes_upcoming'] = [
+    'inputType' => 'text',
+    'default' => 3,
+    'eval' => ['rgxp' => 'natural', 'maxlength' => 3, 'tl_class' => 'w50'],
+    'sql' => 'smallint(5) unsigned NOT NULL default 3',
+];
+
+$dca['fields']['tourtimes_offset'] = [
+    'inputType' => 'text',
+    'default' => 0,
+    'eval' => ['rgxp' => 'natural', 'maxlength' => 3, 'tl_class' => 'w50'],
+    'sql' => 'smallint(5) unsigned NOT NULL default 0',
+];
+
+$dca['fields']['tourtimes_show_cancelled'] = [
+    'inputType' => 'checkbox',
+    'default' => true,
+    'eval' => ['tl_class' => 'w50 m12'],
+    'sql' => "char(1) NOT NULL default '1'",
+];
+
+$dca['fields']['tourtimes_empty'] = [
+    'inputType' => 'text',
+    'eval' => ['maxlength' => 255, 'tl_class' => 'clr long'],
+    'sql' => "varchar(255) NOT NULL default ''",
+];
+
+unset($dca);

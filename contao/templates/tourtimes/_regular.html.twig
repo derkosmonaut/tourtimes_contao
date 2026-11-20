@@ -1,0 +1,15 @@
+{# Regelmäßige Zeiten eines Angebots, z. B. "Mo–Mi 10:00". Erwartet: offer, labels #}
+{% if offer.regular %}
+  <div class="tourtimes-regular">
+    <span class="tourtimes-regular__title">{{ labels.regular }}{% if offer.season %} <span class="tourtimes-regular__season">({{ labels.season }}: {{ offer.season }})</span>{% endif %}</span>
+    <ul class="tourtimes-regular__list">
+      {% for row in offer.regular %}
+        <li>
+          <span class="tourtimes-regular__days">{{ row.days }}</span>
+          <span class="tourtimes-regular__time">{{ row.starts }}{% if row.ends %}–{{ row.ends }}{% endif %}{% if labels.time_suffix %} {{ labels.time_suffix }}{% endif %}</span>
+          {% if row.note %}<span class="tourtimes-regular__note">{{ row.note }}</span>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}

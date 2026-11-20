@@ -1,0 +1,34 @@
+{#
+  Ein Termin. Erwartet: date (Termin), labels; optional show_day (Datum voranstellen).
+  Zustände als Modifier-Klasse: --scheduled, --changed, --extra, --cancelled
+#}
+<span class="tourtimes-date tourtimes-date--{{ date.state }}">
+  {% if show_day|default(false) %}
+    <span class="tourtimes-date__day">
+      {%- if date.isToday -%}
+        {{ labels.today }}
+      {%- elseif date.isTomorrow -%}
+        {{ labels.tomorrow }}
+      {%- else -%}
+        {{ labels.day_short[date.weekday] }}, {{ date.start|date(labels.date_format) }}
+      {%- endif -%}
+    </span>
+  {% endif %}
+
+  <time class="tourtimes-date__time" datetime="{{ date.start|date('Y-m-d\\TH:i') }}">
+    {{- date.start|date('H:i') }}{% if date.end %}–{{ date.end|date('H:i') }}{% endif %}{% if labels.time_suffix %} {{ labels.time_suffix }}{% endif -%}
+  </time>
+
+  {% if date.cancelled %}
+    <span class="tourtimes-badge tourtimes-badge--cancelled">{{ labels.cancelled }}</span>
+  {% elseif date.changed %}
+    <span class="tourtimes-badge tourtimes-badge--changed">{{ labels.changed }}</span>
+    {% if date.originalStart %}<span class="tourtimes-date__original">{{ labels.changed_from }} {{ date.originalStart|date('H:i') }}</span>{% endif %}
+  {% elseif date.extra %}
+    <span class="tourtimes-badge tourtimes-badge--extra">{{ labels.extra }}</span>
+  {% endif %}
+
+  {% for note in date.notes %}
+    <span class="tourtimes-date__note">{{ note }}</span>
+  {% endfor %}
+</span>

@@ -1,0 +1,53 @@
+{% extends "@Contao/frontend_module/_base.html.twig" %}
+
+{% use "@Contao/component/_stylesheet.html.twig" %}
+{% use "@Contao/component/_figure.html.twig" %}
+
+{% block content %}
+  {% add "tourtimes_css" to stylesheets %}
+    {% with {file: asset('bundles/derkosmonauttourtimes/css/tourtimes.css')} %}
+      {{ block('stylesheet_component') }}
+    {% endwith %}
+  {% endadd %}
+
+  <div class="tourtimes-list">
+    {% for offer in offers %}
+      <article class="tourtimes-offer">
+        {% if offer.figure %}
+          {% with {figure: offer.figure} %}{{ block('figure_component') }}{% endwith %}
+        {% endif %}
+
+        <div class="tourtimes-offer__body">
+          <span class="tourtimes-offer__title">
+            {%- if offer.url %}<a href="{{ offer.url }}">{{ offer.title }}</a>{% else %}{{ offer.title }}{% endif -%}
+          </span>
+
+          {% if offer.teaser %}<p class="tourtimes-offer__teaser">{{ offer.teaser|nl2br }}</p>{% endif %}
+
+          {% include "@Contao/tourtimes/_details.html.twig" %}
+          {% include "@Contao/tourtimes/_regular.html.twig" %}
+
+          {% if show_upcoming %}
+            <div class="tourtimes-upcoming">
+              <span class="tourtimes-upcoming__title">{{ labels.upcoming }}</span>
+              {% if offer.upcoming %}
+                <ul class="tourtimes-upcoming__list">
+                  {% for date in offer.upcoming %}
+                    <li>{% include "@Contao/tourtimes/_date.html.twig" with {show_day: true} %}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="tourtimes-upcoming__empty">{{ labels.no_upcoming }}</p>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          <p class="tourtimes-offer__actions">
+            {% include "@Contao/tourtimes/_ticket.html.twig" %}
+            {% if offer.url %}<a class="tourtimes-offer__more" href="{{ offer.url }}">{{ labels.more }}</a>{% endif %}
+          </p>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% endblock %}

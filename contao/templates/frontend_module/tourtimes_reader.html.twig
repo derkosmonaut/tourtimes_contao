@@ -1,0 +1,47 @@
+{% extends "@Contao/frontend_module/_base.html.twig" %}
+
+{% use "@Contao/component/_stylesheet.html.twig" %}
+{% use "@Contao/component/_figure.html.twig" %}
+
+{# Überschrift ist der Titel des Angebots #}
+{% block headline %}
+  <h1 class="tourtimes-reader__title">{{ offer.title }}</h1>
+{% endblock %}
+
+{% block content %}
+  {% add "tourtimes_css" to stylesheets %}
+    {% with {file: asset('bundles/derkosmonauttourtimes/css/tourtimes.css')} %}
+      {{ block('stylesheet_component') }}
+    {% endwith %}
+  {% endadd %}
+
+  <div class="tourtimes-reader">
+    {% if offer.figure %}
+      {% with {figure: offer.figure} %}{{ block('figure_component') }}{% endwith %}
+    {% endif %}
+
+    {% if offer.teaser %}<p class="tourtimes-reader__teaser">{{ offer.teaser|nl2br }}</p>{% endif %}
+
+    {% if offer.description %}
+      <div class="tourtimes-reader__description">{{ offer.description|insert_tag_raw|raw }}</div>
+    {% endif %}
+
+    {% include "@Contao/tourtimes/_details.html.twig" %}
+    {% include "@Contao/tourtimes/_regular.html.twig" %}
+
+    <div class="tourtimes-upcoming">
+      <span class="tourtimes-upcoming__title">{{ labels.upcoming }}</span>
+      {% if offer.upcoming %}
+        <ul class="tourtimes-upcoming__list">
+          {% for date in offer.upcoming %}
+            <li>{% include "@Contao/tourtimes/_date.html.twig" with {show_day: true} %}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="tourtimes-upcoming__empty">{{ labels.no_upcoming }}</p>
+      {% endif %}
+    </div>
+
+    <p class="tourtimes-offer__actions">{% include "@Contao/tourtimes/_ticket.html.twig" %}</p>
+  </div>
+{% endblock %}

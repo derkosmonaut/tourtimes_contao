@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  test-and-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: composer:v2
+
+      - run: composer install --no-interaction --prefer-dist --no-plugins --ignore-platform-reqs
+
+      # Ein Release mit roten Tests soll auffallen
+      - run: vendor/bin/phpunit
+
+      # Optional: Packagist sofort benachrichtigen. Läuft nur, wenn die Secrets gesetzt sind
+      # (PACKAGIST_USERNAME und PACKAGIST_TOKEN unter Settings > Secrets and variables > Actions).
+      # Ist der GitHub-Hook von Packagist eingerichtet, ist dieser Schritt nicht nötig.
+      - name: Packagist aktualisieren
+        env:
+          PACKAGIST_USERNAME: ${{ secrets.PACKAGIST_USERNAME }}
+          PACKAGIST_TOKEN: ${{ secrets.PACKAGIST_TOKEN }}
+        run: |
+          if [ -z "$PACKAGIST_USERNAME" ] || [ -z "$PACKAGIST_TOKEN" ]; then
+            echo "Keine Packagist-Zugangsdaten hinterlegt, übersprungen."
+            exit 0
+          fi
+          curl --fail -X POST \
+            -H 'Content-Type: application/json' \
+            "https://packagist.org/api/update-package?username=${PACKAGIST_USERNAME}&apiToken=${PACKAGIST_TOKEN}" \
+            -d '{"repository":{"url":"https://packagist.org/packages/derkosmonaut/tourtimes-contao"}}'

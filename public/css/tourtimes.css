@@ -1,0 +1,150 @@
+/*
+ * Grundstil für Führungen und Termine. Farben und Abstände über CSS-Variablen im Theme anpassbar:
+ *   .tourtimes-list, .tourtimes-today, .tourtimes-reader { --tourtimes-cancelled: #b00020; }
+ */
+.tourtimes-list,
+.tourtimes-today,
+.tourtimes-reader {
+  --tourtimes-gap: 1rem;
+  --tourtimes-muted: #666;
+  --tourtimes-cancelled: #b00020;
+  --tourtimes-changed: #8a5a00;
+  --tourtimes-extra: #1b6e3a;
+  --tourtimes-badge-bg: rgb(0 0 0 / 6%);
+}
+
+/* Liste der Angebote */
+.tourtimes-list {
+  display: grid;
+  gap: calc(var(--tourtimes-gap) * 2);
+}
+
+.tourtimes-offer {
+  display: grid;
+  gap: var(--tourtimes-gap);
+}
+
+@media (min-width: 48em) {
+  .tourtimes-offer:has(> figure) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  }
+}
+
+.tourtimes-offer__title {
+  display: block;
+  font-size: 1.25em;
+  font-weight: bold;
+}
+
+.tourtimes-offer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tourtimes-gap);
+}
+
+/* Details */
+.tourtimes-details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: .25em var(--tourtimes-gap);
+  margin: 0;
+}
+
+.tourtimes-details dt {
+  color: var(--tourtimes-muted);
+}
+
+.tourtimes-details dd {
+  margin: 0;
+}
+
+/* Regelmäßige Termine und nächste Termine */
+.tourtimes-regular__title,
+.tourtimes-upcoming__title {
+  display: block;
+  font-weight: bold;
+}
+
+.tourtimes-regular__season,
+.tourtimes-regular__note,
+.tourtimes-date__original {
+  color: var(--tourtimes-muted);
+}
+
+.tourtimes-regular__list,
+.tourtimes-upcoming__list,
+.tourtimes-today__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tourtimes-regular__list li,
+.tourtimes-date {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .25em .75em;
+}
+
+.tourtimes-regular__days {
+  min-width: 6em;
+}
+
+.tourtimes-date__day {
+  min-width: 7.5em;
+}
+
+.tourtimes-date__time,
+.tourtimes-today__time {
+  font-variant-numeric: tabular-nums;
+}
+
+.tourtimes-date__note {
+  font-style: italic;
+}
+
+/* Zustände */
+.tourtimes-badge {
+  padding: .05em .45em;
+  border-radius: .25em;
+  background: var(--tourtimes-badge-bg);
+  font-size: .85em;
+}
+
+.tourtimes-badge--cancelled { color: var(--tourtimes-cancelled); }
+.tourtimes-badge--changed { color: var(--tourtimes-changed); }
+.tourtimes-badge--extra { color: var(--tourtimes-extra); }
+
+.tourtimes-date--cancelled .tourtimes-date__time,
+.tourtimes-today__item--cancelled .tourtimes-today__time,
+.tourtimes-today__item--cancelled .tourtimes-today__offer {
+  text-decoration: line-through;
+}
+
+/* Tagesliste (auch für Infomonitore) */
+.tourtimes-today__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .25em var(--tourtimes-gap);
+  padding: .5em 0;
+  border-bottom: 1px solid var(--tourtimes-badge-bg);
+}
+
+.tourtimes-today__time {
+  min-width: 4.5em;
+  font-weight: bold;
+}
+
+.tourtimes-today__offer {
+  font-weight: bold;
+}
+
+.tourtimes-today__meeting-point {
+  color: var(--tourtimes-muted);
+}
+
+.tourtimes-today__empty[hidden] {
+  display: none;
+}
