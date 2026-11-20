@@ -3,6 +3,13 @@
     "description": "Regelmäßige Termine wie Führungen für Contao: Standard- und Saisonpläne, Ausnahmen, spontane Absagen, Tagesliste für Infomonitore",
     "type": "contao-bundle",
     "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Sebastian Baller / bbsMEDIEN",
+            "homepage": "https://bbsmedien.de",
+            "role": "Developer"
+        }
+    ],
     "keywords": ["contao", "führungen", "termine", "tours", "infoscreen"],
     "require": {
         "php": "^8.5",
