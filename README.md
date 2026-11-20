@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/logo.svg" alt="Logo" width="96"></p>
+
 # tourtimes_contao
 
 *** Release Candidate: im Einsatz getestet, aber noch nicht als stabil gekennzeichnet ***
@@ -45,9 +47,15 @@ Die Dauer gilt für alle Termine ohne eigenes Ende.
 Unter „Zeitraum“ lässt sich das Angebot begrenzen: „Termine ab“ und „Termine bis“ und/oder „Endet nach X Terminen“
 (gezählt ab „Termine ab“; jeder Termin zählt, auch abgesagte und Zusatztermine).
 
+In der Liste führen die Symbole rechts zu den Plänen, Ausnahmen und spontanen Absagen des Angebots.
+
+![Angebotsliste im Backend mit den Symbolen für Pläne, Ausnahmen und Absagen](docs/screenshots/angebote.png)
+
 **2. Pläne und Zeitslots.** Über das Symbol „Pläne“ einen Standardplan anlegen, optional Saisonpläne
 (z. B. „Sommer“ vom 1.4. bis 31.10., jährlich). Je Plan Zeitslots anlegen: Wochentage anhaken
 (mit Schnellauswahl), Beginn und optional Ende.
+
+![Symbol „Standard- und Saisonpläne“](docs/screenshots/symbol-plaene.png)
 
 **3. Ausnahmen.** Für geplante Abweichungen an bestimmten Tagen. Art wählen:
 
@@ -58,8 +66,12 @@ Unter „Zeitraum“ lässt sich das Angebot begrenzen: „Termine ab“ und „
 | Findet statt, mit Hinweis | Hinweis am Termin | ganzes Angebot oder ausgewählte Slots |
 | Zusatztermin | zusätzlicher Termin zur angegebenen Uhrzeit | – |
 
+![Symbol „Ausnahmen“](docs/screenshots/symbol-ausnahmen.png)
+
 **4. Spontane Absage.** Unter „Spontane Absagen“ Hinweistext und Beginn eintragen, das Ende ist optional.
 Alle Termine, die im Zeitraum beginnen, fallen aus. Zum Aufheben „Aktiv“ abwählen oder löschen.
+
+![Symbol „Spontane Absagen“](docs/screenshots/symbol-absagen.png)
 
 **5. Ausgabe.** Frontend-Modul anlegen und einbinden:
 
@@ -67,7 +79,10 @@ Alle Termine, die im Zeitraum beginnen, fallen aus. Zum Aufheben „Aktiv“ abw
   Optional ein *Lesermodul*: Ist ein Angebot aufgerufen, zeigt die Liste stattdessen die Detailansicht (Liste und Detail auf einer Seite)
 - *Termine heute*: Angebote, Versatz in Minuten, abgesagte Termine anzeigen oder ausblenden, Text ohne Termine.
   Mit „Nächsten Tag anzeigen“ erscheinen nach dem Hinweis die Termine des nächsten Tages mit Terminen (z. B. „Morgen“)
-- *Detailansicht*: auf der Weiterleitungsseite einbinden; das Angebot kommt über den Alias in der URL
+- *Detailansicht*: auf der Weiterleitungsseite einbinden; das Angebot kommt über den Alias in der URL.
+  „Anzahl nächster Termine“ = 0 blendet die Terminliste auf der Detailseite aus
+
+![Einstellungen des Moduls „Angebot-Detailansicht“](docs/screenshots/modul-detailansicht.png)
 
 Für die Sitemap zählen die Weiterleitungsseiten der Module „Angebotsliste“ und „Termine heute“. Liegen Liste und Detail
 auf einer Seite (Lesermodul), trage diese Seite auch als Weiterleitungsseite ein.
@@ -87,6 +102,11 @@ composer require derkosmonaut/tourtimes-contao
 ```
 
 Oder im Contao Manager nach „tourtimes“ suchen. Danach die Datenbank aktualisieren.
+
+## Branding im Contao Manager
+
+Titel, Beschreibung und Logo für die Paketliste des Contao Managers liegen vorbereitet unter
+`docs/package-metadata/` (Pull Request an [contao/package-metadata](https://github.com/contao/package-metadata)).
 
 ## Entwicklung
 

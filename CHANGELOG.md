@@ -1,5 +1,9 @@
 # Changelog
 
+## Unveröffentlicht
+
+- Logo, Paket-Metadaten für den Contao Manager (`docs/package-metadata/`) und Screenshots im README
+
 ## 0.1.0 – 2026-11-20 (Release Candidate)
 
 Erste Version, in einer Contao-5.7-Installation getestet.
