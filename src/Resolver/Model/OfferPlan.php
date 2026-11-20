@@ -16,6 +16,10 @@ final readonly class OfferPlan
      * @param list<DayException>  $exceptions
      * @param list<Cancellation>  $cancellations
      * @param int                 $duration     Dauer in Minuten für Termine ohne Ende (0 = ohne Ende)
+     * @param string|null         $validFrom    erster möglicher Tag als "Y-m-d"; null = unbegrenzt
+     * @param string|null         $validUntil   letzter möglicher Tag als "Y-m-d"; null = unbegrenzt
+     * @param int                 $maxDates     Angebot endet nach so vielen Terminen ab $validFrom (0 = unbegrenzt).
+     *                                          Jeder Termin zählt, auch abgesagte und Zusatztermine.
      */
     public function __construct(
         public int $offerId,
@@ -24,6 +28,9 @@ final readonly class OfferPlan
         public array $exceptions = [],
         public array $cancellations = [],
         public int $duration = 0,
+        public ?string $validFrom = null,
+        public ?string $validUntil = null,
+        public int $maxDates = 0,
     ) {
     }
 }

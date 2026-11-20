@@ -15,6 +15,10 @@ $GLOBALS['TL_LANG']['tl_tt_offer']['ticket_url'] = ['Ticketlink', 'Adresse des T
 $GLOBALS['TL_LANG']['tl_tt_offer']['ticket_label'] = ['Linktext', 'Leer = „Tickets“.'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['published'] = ['Veröffentlicht', 'Nur veröffentlichte Angebote erscheinen im Frontend.'];
 
+$GLOBALS['TL_LANG']['tl_tt_offer']['date_from'] = ['Termine ab', 'Optional. Vorher finden keine Termine statt.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['date_until'] = ['Termine bis', 'Optional. Danach finden keine Termine statt und das Angebot verschwindet aus der Liste.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['max_dates'] = ['Endet nach Terminen', 'Optional, z. B. 5. Gezählt wird ab „Termine ab“, jeder Termin zählt mit (auch abgesagte und Zusatztermine). 0 = unbegrenzt.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['period_legend'] = 'Zeitraum';
 $GLOBALS['TL_LANG']['tl_tt_offer']['title_legend'] = 'Angebot';
 $GLOBALS['TL_LANG']['tl_tt_offer']['text_legend'] = 'Texte';
 $GLOBALS['TL_LANG']['tl_tt_offer']['image_legend'] = 'Bild';

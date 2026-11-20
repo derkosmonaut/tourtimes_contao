@@ -9,3 +9,4 @@ $GLOBALS['TL_LANG']['FMD']['tourtimes_reader'] = ['Angebot-Detailansicht', 'Zeig
 
 $GLOBALS['TL_LANG']['ERR']['tourtimes_time'] = 'Bitte eine Uhrzeit im Format HH:MM angeben (z. B. 10:00).';
 $GLOBALS['TL_LANG']['ERR']['tourtimes_range'] = 'Das Enddatum darf nicht vor dem Beginn liegen. Bei einem einzelnen Tag das Feld leer lassen.';
+$GLOBALS['TL_LANG']['ERR']['tourtimes_count'] = 'Für eine Anzahl an Terminen bitte auch „Termine ab“ angeben.';

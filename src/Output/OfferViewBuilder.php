@@ -7,6 +7,7 @@ namespace Derkosmonaut\TourTimesBundle\Output;
 use DateTimeImmutable;
 use DateTimeZone;
 use Derkosmonaut\TourTimesBundle\Repository\OfferRepository;
+use Derkosmonaut\TourTimesBundle\Resolver\Model\OfferPlan;
 use Derkosmonaut\TourTimesBundle\Resolver\Model\Occurrence;
 use Derkosmonaut\TourTimesBundle\Resolver\OccurrenceResolver;
 
@@ -34,23 +35,33 @@ class OfferViewBuilder
      * Angebote mit regelmäßigen Zeiten und nächsten Terminen (Liste und Detailansicht).
      *
      * @param list<Offer>        $offers
-     * @param array<int, string> $dayNames Kurznamen der Wochentage
+     * @param array<int, string> $dayNames  Kurznamen der Wochentage
+     * @param bool               $skipEnded abgelaufene Angebote weglassen (Liste), in der Detailansicht behalten
      *
      * @return list<array<string, mixed>>
      */
-    public function buildOffers(array $offers, DateTimeImmutable $now, int $upcoming, bool $includeCancelled, array $dayNames): array
+    public function buildOffers(array $offers, DateTimeImmutable $now, int $upcoming, bool $includeCancelled, array $dayNames, bool $skipEnded = true): array
     {
         $timezone = $now->getTimezone();
         $views = [];
 
         foreach ($offers as $offer) {
             $plan = $this->repository->loadPlan($offer['id'], $offer['duration'], $timezone);
+            $ended = $this->resolver->hasEnded($plan, $now);
+
+            if ($ended && $skipEnded) {
+                continue;
+            }
+
             $season = $this->resolver->getActiveSeason($plan, $now);
 
             $views[] = [
                 ...$offer,
                 'regular' => RegularTimesFormatter::group($this->resolver->getRegularSlots($plan, $now) ?? [], $dayNames),
                 'season' => $season?->title,
+                'ended' => $ended,
+                'validFrom' => null !== $plan->validFrom ? new DateTimeImmutable($plan->validFrom, $timezone) : null,
+                'validUntil' => $this->lastDay($plan, $now),
                 'upcoming' => array_map(
                     fn (Occurrence $o): array => $this->occurrence($o, $now),
                     $upcoming > 0 ? $this->resolver->getUpcoming($plan, $now, $upcoming, $includeCancelled) : [],
@@ -101,6 +112,21 @@ class OfferViewBuilder
         }
 
         return ['entries' => $entries, 'nextChange' => $nextChange];
+    }
+
+    /**
+     * Letzter Tag des Angebots: "Termine bis" oder der Tag des letzten Termins, sonst null.
+     */
+    private function lastDay(OfferPlan $plan, DateTimeImmutable $now): ?DateTimeImmutable
+    {
+        $last = $this->resolver->getLastStart($plan, $now)?->setTime(0, 0);
+        $until = null !== $plan->validUntil ? new DateTimeImmutable($plan->validUntil, $now->getTimezone()) : null;
+
+        if (null === $last) {
+            return $until;
+        }
+
+        return null !== $until && $until < $last ? $until : $last;
     }
 
     /**

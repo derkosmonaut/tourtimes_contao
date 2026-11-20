@@ -54,12 +54,14 @@ class OfferReaderController extends AbstractTourTimesController
 
         $now = new DateTimeImmutable('now', OfferViewBuilder::timezone());
         $labels = $this->labels();
+        $upcoming = (int) $model->row()['tourtimes_upcoming'];
         $views = $this->viewBuilder->buildOffers(
             [$offer],
             $now,
-            max(1, (int) $model->row()['tourtimes_upcoming']),
+            $upcoming,
             '' !== (string) $model->row()['tourtimes_show_cancelled'],
             $labels['day_short'] ?? [],
+            false,
         );
         $view = $this->decorate($views, $model, true)[0];
 
@@ -75,6 +77,7 @@ class OfferReaderController extends AbstractTourTimesController
 
         $template->set('labels', $labels);
         $template->set('offer', $view);
+        $template->set('show_upcoming', $upcoming > 0);
 
         $this->tagResponse([...self::TAGS, 'contao.db.tl_tt_offer.'.$offer['id']]);
 

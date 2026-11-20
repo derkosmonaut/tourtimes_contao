@@ -119,6 +119,19 @@ class OfferRepository
             $defaultSlots = [...($defaultSlots ?? []), ...$slots];
         }
 
+        $range = $this->connection->fetchAssociative(
+            'SELECT date_from, date_until, max_dates FROM tl_tt_offer WHERE id = ?',
+            [$offerId],
+        ) ?: [];
+
+        $validFrom = $this->formatDate($range['date_from'] ?? null, $timezone);
+        $validUntil = $this->formatDate($range['date_until'] ?? null, $timezone);
+
+        // ein Ende vor dem Beginn ist ungültig und wird ignoriert
+        if (null !== $validFrom && null !== $validUntil && $validUntil < $validFrom) {
+            $validUntil = null;
+        }
+
         return new OfferPlan(
             $offerId,
             $defaultSlots,
@@ -126,6 +139,9 @@ class OfferRepository
             $this->loadExceptions($offerId, $timezone),
             $this->loadCancellations($offerId, $timezone),
             $duration,
+            $validFrom,
+            $validUntil,
+            (int) ($range['max_dates'] ?? 0),
         );
     }
 

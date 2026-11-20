@@ -28,7 +28,7 @@ final class OfferRepositoryTest extends TestCase
         $this->connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);
 
         foreach ([
-            'CREATE TABLE tl_tt_offer (id INTEGER PRIMARY KEY, title TEXT, alias TEXT, teaser TEXT, description TEXT, singleSRC BLOB, meeting_point TEXT, duration INTEGER, price TEXT, language TEXT, ticket_url TEXT, ticket_label TEXT, published TEXT)',
+            'CREATE TABLE tl_tt_offer (id INTEGER PRIMARY KEY, title TEXT, alias TEXT, teaser TEXT, description TEXT, singleSRC BLOB, meeting_point TEXT, duration INTEGER, price TEXT, language TEXT, ticket_url TEXT, ticket_label TEXT, published TEXT, date_from INTEGER, date_until INTEGER, max_dates INTEGER)',
             'CREATE TABLE tl_tt_schedule (id INTEGER PRIMARY KEY, pid INTEGER, type TEXT, title TEXT, "start" INTEGER, "stop" INTEGER, recurring TEXT, priority INTEGER)',
             'CREATE TABLE tl_tt_slot (id INTEGER PRIMARY KEY, pid INTEGER, weekdays BLOB, starts TEXT, ends TEXT, note TEXT)',
             'CREATE TABLE tl_tt_exception (id INTEGER PRIMARY KEY, pid INTEGER, type TEXT, title TEXT, scope TEXT, slots BLOB, "start" INTEGER, "stop" INTEGER, recurring TEXT, starts TEXT, ends TEXT, note TEXT)',
@@ -163,5 +163,20 @@ final class OfferRepositoryTest extends TestCase
 
         self::assertCount(1, $day);
         self::assertSame('17:00', $day[0]->start->format('H:i'));
+    }
+
+    public function testOfferPeriodIsLoaded(): void
+    {
+        $this->connection->executeStatement(
+            'UPDATE tl_tt_offer SET date_from = ?, date_until = ?, max_dates = 3 WHERE id = 1',
+            [$this->timestamp('2026-11-16 00:00'), $this->timestamp('2026-12-31 00:00')],
+        );
+
+        $plan = (new OfferRepository($this->connection))->loadPlan(1, 90, $this->timezone);
+
+        self::assertSame('2026-11-16', $plan->validFrom);
+        self::assertSame('2026-12-31', $plan->validUntil);
+        self::assertSame(3, $plan->maxDates);
+        self::assertSame([], $this->day('2026-11-21'), 'vierter Termin (Sa) fällt weg: Mo, Di, Mi sind die drei');
     }
 }

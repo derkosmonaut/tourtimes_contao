@@ -236,4 +236,68 @@ final class OccurrenceResolverTest extends TestCase
             array_map(static fn (Occurrence $o): string => $o->start->format('Y-m-d'), $range),
         );
     }
+
+    /**
+     * Sommerführung: montags 10:00, ab 1.6.2026 (Mo), endet nach 5 Terminen.
+     * Termine: 1.6., 8.6., 15.6. (abgesagt, zählt mit), 22.6., 29.6.
+     */
+    private function summerPlan(int $maxDates = 5, ?string $until = null): OfferPlan
+    {
+        return new OfferPlan(
+            9,
+            [new TimeSlot(1, [1], '10:00')],
+            [],
+            [new DayException('2026-06-15', null, false, DayException::CANCEL)],
+            [],
+            90,
+            '2026-06-01',
+            $until,
+            $maxDates,
+        );
+    }
+
+    public function testNoDatesBeforeValidFrom(): void
+    {
+        self::assertSame([], $this->resolver->getDay($this->summerPlan(), $this->at('2026-05-25')));
+        self::assertCount(1, $this->resolver->getDay($this->summerPlan(), $this->at('2026-06-01')));
+    }
+
+    public function testEndsAfterCountIncludingCancelled(): void
+    {
+        $plan = $this->summerPlan();
+
+        self::assertSame('2026-06-29 10:00', $this->resolver->getLastStart($plan, $this->at('2026-01-01'))?->format('Y-m-d H:i'));
+        self::assertCount(1, $this->resolver->getDay($plan, $this->at('2026-06-29')));
+        self::assertSame([], $this->resolver->getDay($plan, $this->at('2026-07-06')));
+    }
+
+    public function testUpcomingStartsAtValidFromEvenFarAhead(): void
+    {
+        $upcoming = $this->resolver->getUpcoming($this->summerPlan(), $this->at('2025-11-20 12:00'), 10, true);
+
+        self::assertSame(
+            ['2026-06-01', '2026-06-08', '2026-06-15', '2026-06-22', '2026-06-29'],
+            array_map(static fn (Occurrence $o): string => $o->start->format('Y-m-d'), $upcoming),
+        );
+    }
+
+    public function testValidUntilWinsOverCount(): void
+    {
+        $plan = $this->summerPlan(5, '2026-06-20');
+
+        self::assertNull($this->resolver->getLastStart($plan, $this->at('2026-01-01')), 'nur 3 Termine bis 20.6., Anzahl wird nicht erreicht');
+        self::assertCount(1, $this->resolver->getDay($plan, $this->at('2026-06-08')));
+        self::assertSame([], $this->resolver->getDay($plan, $this->at('2026-06-22')));
+    }
+
+    public function testHasEnded(): void
+    {
+        $plan = $this->summerPlan();
+
+        self::assertFalse($this->resolver->hasEnded($plan, $this->at('2026-06-29 09:59')));
+        self::assertTrue($this->resolver->hasEnded($plan, $this->at('2026-06-29 10:00')));
+        self::assertTrue($this->resolver->hasEnded($this->summerPlan(0, '2026-06-20'), $this->at('2026-06-21 00:00')));
+        self::assertFalse($this->resolver->hasEnded($this->summerPlan(0, '2026-06-20'), $this->at('2026-06-20 23:00')));
+        self::assertFalse($this->resolver->hasEnded($this->plan(), $this->at('2030-01-01')), 'ohne Zeitraum nie vorbei');
+    }
 }

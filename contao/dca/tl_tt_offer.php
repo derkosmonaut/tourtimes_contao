@@ -53,7 +53,7 @@ $GLOBALS['TL_DCA']['tl_tt_offer'] = [
         ],
     ],
     'palettes' => [
-        'default' => '{title_legend},title,alias;{text_legend},teaser,description;{image_legend},singleSRC;{details_legend},meeting_point,duration,price,language;{ticket_legend},ticket_url,ticket_label;{publish_legend},published',
+        'default' => '{title_legend},title,alias;{text_legend},teaser,description;{image_legend},singleSRC;{details_legend},meeting_point,duration,price,language;{period_legend},date_from,date_until,max_dates;{ticket_legend},ticket_url,ticket_label;{publish_legend},published',
     ],
     'fields' => [
         'id' => [
@@ -115,6 +115,25 @@ $GLOBALS['TL_DCA']['tl_tt_offer'] = [
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
             'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        // Zeitraum des Angebots: außerhalb gibt es keine Termine, danach verschwindet es aus der Liste
+        'date_from' => [
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'sql' => 'int(10) unsigned NULL',
+        ],
+        'date_until' => [
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'save_callback' => [['Derkosmonaut\\TourTimesBundle\\Dca\\DateRangeCallback', 'validateStop']],
+            'sql' => 'int(10) unsigned NULL',
+        ],
+        // zählt ab "Termine ab" jeden Termin, auch abgesagte und Zusatztermine (0 = unbegrenzt)
+        'max_dates' => [
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'natural', 'maxlength' => 4, 'tl_class' => 'w50'],
+            'save_callback' => [['Derkosmonaut\\TourTimesBundle\\Dca\\DateRangeCallback', 'requireStartForCount']],
+            'sql' => 'smallint(5) unsigned NOT NULL default 0',
         ],
         'ticket_url' => [
             'inputType' => 'text',

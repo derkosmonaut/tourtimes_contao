@@ -24,11 +24,26 @@ use Derkosmonaut\TourTimesBundle\Resolver\Model\TimeSlot;
  * Verschiebung, Hinweise werden gesammelt, Zusatztermine kommen hinzu.
  * Ein Termin gehört zu seinem Starttag. Alle Zeiten sind lokale Zeiten der
  * Zeitzone des übergebenen DateTimeImmutable.
+ *
+ * Darüber liegt der Zeitraum des Angebots: Außerhalb von "Termine ab/bis" gibt es
+ * keine Termine. "Endet nach X Terminen" zählt ab "Termine ab" jeden Termin mit,
+ * auch abgesagte und Zusatztermine.
  */
 final class OccurrenceResolver
 {
     /** Wie viele Tage voraus nach kommenden Terminen gesucht wird. */
     public const HORIZON_DAYS = 120;
+
+    /** Wie weit nach dem X-ten Termin gesucht wird (Tage ab "Termine ab"). */
+    private const COUNT_HORIZON_DAYS = 1100;
+
+    /** @var \WeakMap<OfferPlan, DateTimeImmutable|null> Beginn des letzten Termins je Plan */
+    private \WeakMap $lastStarts;
+
+    public function __construct()
+    {
+        $this->lastStarts = new \WeakMap();
+    }
 
     /**
      * Alle Termine, die an diesem Tag beginnen, nach Beginn sortiert (inkl. abgesagter).
@@ -37,8 +52,88 @@ final class OccurrenceResolver
      */
     public function getDay(OfferPlan $plan, DateTimeImmutable $date): array
     {
+        $occurrences = $this->buildDay($plan, $date);
+
+        if ([] === $occurrences || $plan->maxDates < 1) {
+            return $occurrences;
+        }
+
+        $last = $this->getLastStart($plan, $date);
+
+        if (null === $last) {
+            return $occurrences;
+        }
+
+        return array_values(array_filter($occurrences, static fn (Occurrence $o): bool => $o->start <= $last));
+    }
+
+    /**
+     * Ist das Angebot vorbei (Zeitraum abgelaufen oder letzter Termin begonnen)?
+     */
+    public function hasEnded(OfferPlan $plan, DateTimeImmutable $now): bool
+    {
+        if (null !== $plan->validUntil && $now->format('Y-m-d') > $plan->validUntil) {
+            return true;
+        }
+
+        if ($plan->maxDates < 1) {
+            return false;
+        }
+
+        $last = $this->getLastStart($plan, $now);
+
+        return null !== $last && $now >= $last;
+    }
+
+    /**
+     * Beginn des letzten Termins bei "Endet nach X Terminen"; null = keine Begrenzung
+     * (keine Anzahl, kein Startdatum oder X Termine im Suchzeitraum nicht erreicht).
+     */
+    public function getLastStart(OfferPlan $plan, DateTimeImmutable $reference): ?DateTimeImmutable
+    {
+        if ($plan->maxDates < 1 || null === $plan->validFrom) {
+            return null;
+        }
+
+        if ($this->lastStarts->offsetExists($plan)) {
+            return $this->lastStarts[$plan];
+        }
+
+        $day = new DateTimeImmutable($plan->validFrom, $reference->getTimezone());
+        $count = 0;
+        $last = null;
+
+        for ($i = 0; $i < self::COUNT_HORIZON_DAYS && null === $last; ++$i) {
+            $current = $day->modify('+'.$i.' day');
+
+            if (null !== $plan->validUntil && $current->format('Y-m-d') > $plan->validUntil) {
+                break;
+            }
+
+            foreach ($this->buildDay($plan, $current) as $occurrence) {
+                if (++$count === $plan->maxDates) {
+                    $last = $occurrence->start;
+                    break;
+                }
+            }
+        }
+
+        return $this->lastStarts[$plan] = $last;
+    }
+
+    /**
+     * Termine eines Tages ohne die Begrenzung auf X Termine.
+     *
+     * @return list<Occurrence>
+     */
+    private function buildDay(OfferPlan $plan, DateTimeImmutable $date): array
+    {
         $day = $date->setTime(0, 0);
         $ymd = $day->format('Y-m-d');
+
+        if ((null !== $plan->validFrom && $ymd < $plan->validFrom) || (null !== $plan->validUntil && $ymd > $plan->validUntil)) {
+            return [];
+        }
         $weekday = (int) $day->format('N');
 
         $exceptions = array_values(array_filter(
@@ -115,6 +210,11 @@ final class OccurrenceResolver
     {
         $result = [];
         $day = $now->setTime(0, 0);
+
+        // ein Angebot, das erst später beginnt: ab seinem ersten Tag suchen
+        if (null !== $plan->validFrom && $plan->validFrom > $day->format('Y-m-d')) {
+            $day = new DateTimeImmutable($plan->validFrom, $now->getTimezone());
+        }
 
         for ($i = 0; $i < $horizonDays && \count($result) < $limit; ++$i) {
             foreach ($this->getDay($plan, $day->modify('+'.$i.' day')) as $occurrence) {

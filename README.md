@@ -9,6 +9,8 @@ für Pläne, Saisons und Ausnahmen, aber für einzelne Termine statt Öffnungsfe
 ## Funktionsumfang
 
 - Beliebig viele **Angebote** (z. B. Führungen) mit Beschreibung, Bild, Treffpunkt, Dauer, Preis, Sprache und Ticketlink
+- **Zeitraum je Angebot**: „Termine ab“, „Termine bis“ und „Endet nach X Terminen“, z. B. eine Sommerführung
+  an fünf Montagen; danach verschwindet das Angebot von selbst aus der Liste
 - **Standard- und Saisonpläne** je Angebot (Zeitraum, jährlich wiederholbar, Priorität)
 - **Zeitslots** je Plan, z. B. „Mo, Di, Mi 10:00–11:00“, optional mit festem Hinweis („auf Englisch“)
 - **Ausnahmen** für Tage oder Zeiträume, für das ganze Angebot oder einzelne Slots:
@@ -25,6 +27,7 @@ für Pläne, Saisons und Ausnahmen, aber für einzelne Termine statt Öffnungsfe
 
 Die speziellere Ebene schlägt die allgemeinere:
 
+0. Zeitraum des Angebots (außerhalb gibt es keine Termine)
 1. Spontane Absage (schlägt alles, auch Zusatztermine)
 2. Ausnahme (Ausfall schlägt Verschiebung, Hinweise werden gesammelt, Zusatztermine kommen hinzu)
 3. Saisonplan (ersetzt den Standardplan vollständig, höhere Priorität gewinnt)
@@ -34,6 +37,8 @@ Die speziellere Ebene schlägt die allgemeinere:
 
 **1. Angebot anlegen.** Unter „Inhalte → Führungen“ ein Angebot mit Titel, Texten und Details anlegen.
 Die Dauer gilt für alle Termine ohne eigenes Ende.
+Unter „Zeitraum“ lässt sich das Angebot begrenzen: „Termine ab“ und „Termine bis“ und/oder „Endet nach X Terminen“
+(gezählt ab „Termine ab“; jeder Termin zählt, auch abgesagte und Zusatztermine).
 
 **2. Pläne und Zeitslots.** Über das Symbol „Pläne“ einen Standardplan anlegen, optional Saisonpläne
 (z. B. „Sommer“ vom 1.4. bis 31.10., jährlich). Je Plan Zeitslots anlegen: Wochentage anhaken

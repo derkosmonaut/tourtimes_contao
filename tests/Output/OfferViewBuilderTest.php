@@ -142,4 +142,27 @@ final class OfferViewBuilderTest extends TestCase
         );
         self::assertSame('2026-11-16 15:00', OfferViewBuilder::nextUpcomingChange($views, $this->at('2026-11-16 12:00'))->format('Y-m-d H:i'));
     }
+
+    public function testEndedOffersAreSkippedInList(): void
+    {
+        $plan = new OfferPlan(5, [new TimeSlot(9, [1], '10:00')], [], [], [], 60, '2026-11-02', null, 2);
+        $repository = new class($plan) extends OfferRepository {
+            public function __construct(private readonly OfferPlan $plan)
+            {
+            }
+
+            public function loadPlan(int $offerId, int $duration, DateTimeZone $timezone): OfferPlan
+            {
+                return $this->plan;
+            }
+        };
+        $builder = new OfferViewBuilder($repository, new OccurrenceResolver());
+        $offer = [['id' => 5, 'title' => 'Herbstführung', 'duration' => 60, 'alias' => '']];
+
+        self::assertSame([], $builder->buildOffers($offer, $this->at('2026-11-16 12:00'), 3, false, []));
+
+        $views = $builder->buildOffers($offer, $this->at('2026-11-16 12:00'), 3, false, [], false);
+        self::assertTrue($views[0]['ended']);
+        self::assertSame('2026-11-09', $views[0]['validUntil']?->format('Y-m-d'), 'Tag des letzten Termins');
+    }
 }

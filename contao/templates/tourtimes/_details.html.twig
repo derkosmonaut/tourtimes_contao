@@ -1,9 +1,21 @@
 {# Treffpunkt, Dauer, Preis und Sprache eines Angebots. Erwartet: offer, labels #}
-{% if offer.meetingPoint or offer.duration or offer.price or offer.language %}
+{% if offer.meetingPoint or offer.duration or offer.price or offer.language or offer.validFrom or offer.validUntil %}
   <dl class="tourtimes-details">
     {% if offer.meetingPoint %}<dt>{{ labels.meeting_point }}</dt><dd>{{ offer.meetingPoint }}</dd>{% endif %}
     {% if offer.duration %}<dt>{{ labels.duration }}</dt><dd>{{ offer.duration }} {{ labels.minutes }}</dd>{% endif %}
     {% if offer.price %}<dt>{{ labels.price }}</dt><dd>{{ offer.price }}</dd>{% endif %}
+    {% if offer.validFrom or offer.validUntil %}
+      <dt>{{ labels.period }}</dt>
+      <dd>
+        {%- if offer.validFrom and offer.validUntil -%}
+          {{ offer.validFrom|date(labels.date_format) }}–{{ offer.validUntil|date(labels.date_format) }}
+        {%- elseif offer.validFrom -%}
+          {{ labels.from }} {{ offer.validFrom|date(labels.date_format) }}
+        {%- else -%}
+          {{ labels.until }} {{ offer.validUntil|date(labels.date_format) }}
+        {%- endif -%}
+      </dd>
+    {% endif %}
     {% if offer.language %}<dt>{{ labels.language }}</dt><dd>{{ offer.language }}</dd>{% endif %}
   </dl>
 {% endif %}

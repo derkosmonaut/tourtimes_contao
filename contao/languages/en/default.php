@@ -9,3 +9,4 @@ $GLOBALS['TL_LANG']['FMD']['tourtimes_reader'] = ['Offer reader', 'Shows one off
 
 $GLOBALS['TL_LANG']['ERR']['tourtimes_time'] = 'Please enter a time in HH:MM format (e.g. 10:00).';
 $GLOBALS['TL_LANG']['ERR']['tourtimes_range'] = 'The end date must not be before the start. Leave the field empty for a single day.';
+$GLOBALS['TL_LANG']['ERR']['tourtimes_count'] = 'Please also enter "Dates from" for a number of dates.';

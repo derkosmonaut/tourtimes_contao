@@ -29,18 +29,20 @@
     {% include "@Contao/tourtimes/_details.html.twig" %}
     {% include "@Contao/tourtimes/_regular.html.twig" %}
 
-    <div class="tourtimes-upcoming">
-      <span class="tourtimes-upcoming__title">{{ labels.upcoming }}</span>
-      {% if offer.upcoming %}
-        <ul class="tourtimes-upcoming__list">
-          {% for date in offer.upcoming %}
-            <li>{% include "@Contao/tourtimes/_date.html.twig" with {show_day: true} %}</li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p class="tourtimes-upcoming__empty">{{ labels.no_upcoming }}</p>
-      {% endif %}
-    </div>
+    {% if show_upcoming %}
+      <div class="tourtimes-upcoming">
+        <span class="tourtimes-upcoming__title">{{ labels.upcoming }}</span>
+        {% if offer.upcoming %}
+          <ul class="tourtimes-upcoming__list">
+            {% for date in offer.upcoming %}
+              <li>{% include "@Contao/tourtimes/_date.html.twig" with {show_day: true} %}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="tourtimes-upcoming__empty">{{ labels.no_upcoming }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
 
     <p class="tourtimes-offer__actions">{% include "@Contao/tourtimes/_ticket.html.twig" %}</p>
   </div>

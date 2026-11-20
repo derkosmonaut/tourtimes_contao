@@ -15,13 +15,26 @@ use Contao\Input;
  */
 class DateRangeCallback
 {
+    /**
+     * "Endet nach X Terminen" braucht einen Beginn, ab dem gezählt wird.
+     */
+    public function requireStartForCount(mixed $value): mixed
+    {
+        if ((int) $value > 0 && '' === (string) Input::post('date_from')) {
+            throw new \RuntimeException($GLOBALS['TL_LANG']['ERR']['tourtimes_count'] ?? 'Für eine Anzahl an Terminen bitte auch „Termine ab“ angeben.');
+        }
+
+        return $value;
+    }
+
     public function validateStop(mixed $value): mixed
     {
         if (null === $value || '' === $value) {
             return $value;
         }
 
-        $startInput = (string) Input::post('start');
+        // Angebot: date_until gegen date_from, sonst stop gegen start
+        $startInput = (string) (Input::post('date_from') ?? Input::post('start'));
 
         if ('' === $startInput) {
             return $value;
