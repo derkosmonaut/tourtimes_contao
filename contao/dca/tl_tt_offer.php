@@ -53,7 +53,7 @@ $GLOBALS['TL_DCA']['tl_tt_offer'] = [
         ],
     ],
     'palettes' => [
-        'default' => '{title_legend},title,alias;{text_legend},teaser,description;{image_legend},singleSRC;{details_legend},meeting_point,duration,price,language;{period_legend},date_from,date_until,max_dates;{ticket_legend},ticket_url,ticket_label;{publish_legend},published',
+        'default' => '{title_legend},title,alias;{text_legend},teaser,description;{image_legend},singleSRC;{details_legend},meeting_point,duration,price,language;{period_legend},date_from,date_until,max_dates,holiday_region;{ticket_legend},ticket_url,ticket_label;{publish_legend},published;{preview_legend},tourtimes_preview',
     ],
     'fields' => [
         'id' => [
@@ -135,6 +135,14 @@ $GLOBALS['TL_DCA']['tl_tt_offer'] = [
             'save_callback' => [['Derkosmonaut\\TourTimesBundle\\Dca\\DateRangeCallback', 'requireStartForCount']],
             'sql' => 'smallint(5) unsigned NOT NULL default 0',
         ],
+        // an gesetzlichen Feiertagen dieses Bundeslandes keine regulären Termine (leer = Feiertage egal)
+        'holiday_region' => [
+            'inputType' => 'select',
+            'options' => ['DE', 'BW', 'BY', 'BE', 'BB', 'HB', 'HH', 'HE', 'MV', 'NI', 'NW', 'RP', 'SL', 'SN', 'ST', 'SH', 'TH'],
+            'reference' => &$GLOBALS['TL_LANG']['tl_tt_offer']['regions'],
+            'eval' => ['includeBlankOption' => true, 'tl_class' => 'w50'],
+            'sql' => "varchar(2) NOT NULL default ''",
+        ],
         'ticket_url' => [
             'inputType' => 'text',
             'eval' => ['rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 2048, 'dcaPicker' => true, 'tl_class' => 'w50'],
@@ -145,6 +153,10 @@ $GLOBALS['TL_DCA']['tl_tt_offer'] = [
             'inputType' => 'text',
             'eval' => ['maxlength' => 64, 'tl_class' => 'w50'],
             'sql' => "varchar(64) NOT NULL default ''",
+        ],
+        // nur Anzeige, wird über OfferPreviewListener gefüllt
+        'tourtimes_preview' => [
+            'eval' => ['tl_class' => 'clr', 'doNotShow' => true],
         ],
         'published' => [
             'inputType' => 'checkbox',

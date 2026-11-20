@@ -20,6 +20,8 @@ final readonly class OfferPlan
      * @param string|null         $validUntil   letzter möglicher Tag als "Y-m-d"; null = unbegrenzt
      * @param int                 $maxDates     Angebot endet nach so vielen Terminen ab $validFrom (0 = unbegrenzt).
      *                                          Jeder Termin zählt, auch abgesagte und Zusatztermine.
+     * @param list<string>        $holidays     Feiertage als "Y-m-d": keine regulären Termine, sofern keine
+     *                                          Ausnahme (Verschiebung, Hinweis) den Slot an diesem Tag bestätigt
      */
     public function __construct(
         public int $offerId,
@@ -31,6 +33,7 @@ final readonly class OfferPlan
         public ?string $validFrom = null,
         public ?string $validUntil = null,
         public int $maxDates = 0,
+        public array $holidays = [],
     ) {
     }
 }

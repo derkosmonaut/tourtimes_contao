@@ -130,6 +130,100 @@ class OfferViewBuilder
     }
 
     /**
+     * Die angezeigten Termine eines Angebots als schema.org-Events (für add_schema_org im Template).
+     *
+     * @param array<string, mixed> $offer Ergebnis von buildOffers(), mit "url"
+     *
+     * @return list<array<string, mixed>>
+     */
+    public static function schemaEvents(array $offer): array
+    {
+        $events = [];
+        $description = trim(html_entity_decode(strip_tags((string) ($offer['teaser'] ?? '')), ENT_QUOTES | ENT_HTML5));
+
+        foreach ($offer['upcoming'] ?? [] as $date) {
+            $event = [
+                '@type' => 'Event',
+                '@id' => '#/schema/tourtimes/'.$offer['id'].'/'.$date['start']->format('YmdHi'),
+                'name' => (string) $offer['title'],
+                'startDate' => $date['start']->format(DATE_ATOM),
+                'eventStatus' => 'https://schema.org/'.match (true) {
+                    $date['cancelled'] => 'EventCancelled',
+                    $date['changed'] => 'EventRescheduled',
+                    default => 'EventScheduled',
+                },
+                'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+                'location' => ['@type' => 'Place', 'name' => '' !== (string) ($offer['meetingPoint'] ?? '') ? (string) $offer['meetingPoint'] : (string) $offer['title']],
+            ];
+
+            if (null !== $date['end']) {
+                $event['endDate'] = $date['end']->format(DATE_ATOM);
+            }
+
+            if ($date['changed'] && null !== $date['originalStart']) {
+                $event['previousStartDate'] = $date['originalStart']->format(DATE_ATOM);
+            }
+
+            if ('' !== $description) {
+                $event['description'] = $description;
+            }
+
+            if (!empty($offer['url'])) {
+                $event['url'] = (string) $offer['url'];
+            }
+
+            if ('' !== (string) ($offer['ticketUrl'] ?? '')) {
+                $event['offers'] = ['@type' => 'Offer', 'url' => (string) $offer['ticketUrl']];
+            }
+
+            $events[] = $event;
+        }
+
+        return $events;
+    }
+
+    /**
+     * Der nächste Tag nach heute, an dem Termine stattfinden (für "Termine heute",
+     * wenn heute nichts mehr ansteht). null = in den nächsten $maxDays Tagen keiner.
+     *
+     * @param list<array<string, mixed>> $offers
+     *
+     * @return array{date: DateTimeImmutable, isTomorrow: bool, weekday: int, entries: list<array<string, mixed>>}|null
+     */
+    public function buildNextDay(array $offers, DateTimeImmutable $now, bool $includeCancelled, int $maxDays = 14): ?array
+    {
+        $plans = [];
+
+        foreach ($offers as $offer) {
+            $plans[] = [$offer, $this->repository->loadPlan((int) $offer['id'], (int) $offer['duration'], $now->getTimezone())];
+        }
+
+        for ($i = 1; $i <= $maxDays; ++$i) {
+            $day = $now->setTime(0, 0)->modify('+'.$i.' day');
+            $entries = [];
+
+            foreach ($plans as [$offer, $plan]) {
+                foreach ($this->resolver->getDay($plan, $day) as $occurrence) {
+                    if ($includeCancelled || !$occurrence->isCancelled()) {
+                        $entries[] = ['offer' => $offer, ...$this->occurrence($occurrence, $now)];
+                    }
+                }
+            }
+
+            // ein Tag nur mit abgesagten Terminen zählt nicht als "nächster Tag"
+            if ([] === array_filter($entries, static fn (array $e): bool => !$e['cancelled'])) {
+                continue;
+            }
+
+            usort($entries, static fn (array $a, array $b): int => [$a['start'], $a['offer']['title']] <=> [$b['start'], $b['offer']['title']]);
+
+            return ['date' => $day, 'isTomorrow' => 1 === $i, 'weekday' => (int) $day->format('N'), 'entries' => $entries];
+        }
+
+        return null;
+    }
+
+    /**
      * Cache-Dauer bis zur nächsten Änderung, begrenzt auf MIN_AGE bis MAX_AGE.
      */
     public static function maxAge(DateTimeImmutable $now, DateTimeImmutable $nextChange): int

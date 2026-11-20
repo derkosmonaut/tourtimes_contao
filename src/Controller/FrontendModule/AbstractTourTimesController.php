@@ -70,6 +70,22 @@ abstract class AbstractTourTimesController extends AbstractFrontendModuleControl
     }
 
     /**
+     * schema.org-Events der angezeigten Termine, sofern im Modul aktiviert.
+     *
+     * @param list<array<string, mixed>> $offers
+     *
+     * @return list<array<string, mixed>>
+     */
+    protected function schema(array $offers, ModuleModel $model): array
+    {
+        if ('' === (string) ($model->row()['tourtimes_jsonld'] ?? '')) {
+            return [];
+        }
+
+        return array_merge(...array_map(OfferViewBuilder::schemaEvents(...), $offers));
+    }
+
+    /**
      * @param array<string, mixed> $offer
      */
     private function detailUrl(PageModel $page, array $offer): ?string

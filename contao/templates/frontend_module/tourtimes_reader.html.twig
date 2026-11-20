@@ -9,6 +9,11 @@
 {% endblock %}
 
 {% block content %}
+  {# strukturierte Daten (schema.org Event) für Suchmaschinen #}
+  {% for item in schema|default([]) %}
+    {% do add_schema_org(item) %}
+  {% endfor %}
+
   {% add "tourtimes_css" to stylesheets %}
     {% with {file: asset('bundles/derkosmonauttourtimes/css/tourtimes.css')} %}
       {{ block('stylesheet_component') }}

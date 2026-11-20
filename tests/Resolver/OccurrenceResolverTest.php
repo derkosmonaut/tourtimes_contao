@@ -300,4 +300,19 @@ final class OccurrenceResolverTest extends TestCase
         self::assertFalse($this->resolver->hasEnded($this->summerPlan(0, '2026-06-20'), $this->at('2026-06-20 23:00')));
         self::assertFalse($this->resolver->hasEnded($this->plan(), $this->at('2030-01-01')), 'ohne Zeitraum nie vorbei');
     }
+
+    public function testHolidayDropsRegularDatesButKeepsExtrasAndConfirmed(): void
+    {
+        $base = $this->plan([]);
+        $withHoliday = static fn (array $exceptions): OfferPlan => new OfferPlan(7, $base->defaultSlots, $base->seasons, $exceptions, [], 90, null, null, 0, ['2026-11-16']);
+
+        self::assertSame([], $this->resolver->getDay($withHoliday([]), $this->at('2026-11-16')));
+
+        $extra = $this->resolver->getDay($withHoliday([new DayException('2026-11-16', null, false, DayException::EXTRA, [], '15:00')]), $this->at('2026-11-16'));
+        self::assertCount(1, $extra);
+        self::assertSame(Occurrence::EXTRA, $extra[0]->state);
+
+        $confirmed = $this->resolver->getDay($withHoliday([new DayException('2026-11-16', null, false, DayException::NOTE, [1], null, null, 'Feiertagsführung')]), $this->at('2026-11-16'));
+        self::assertSame(['Feiertagsführung'], $confirmed[0]->notes);
+    }
 }

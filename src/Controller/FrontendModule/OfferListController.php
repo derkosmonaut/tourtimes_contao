@@ -42,7 +42,10 @@ class OfferListController extends AbstractTourTimesController
         );
 
         $template->set('labels', $labels);
-        $template->set('offers', $this->decorate($offers, $model, true));
+        $offers = $this->decorate($offers, $model, true);
+
+        $template->set('offers', $offers);
+        $template->set('schema', $this->schema($offers, $model));
         $template->set('show_upcoming', $upcoming > 0);
 
         $this->tagResponse(self::TAGS);

@@ -6,6 +6,7 @@ namespace Derkosmonaut\TourTimesBundle\Repository;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use Derkosmonaut\TourTimesBundle\Holiday\GermanHolidays;
 use Derkosmonaut\TourTimesBundle\Resolver\Model\Cancellation;
 use Derkosmonaut\TourTimesBundle\Resolver\Model\DayException;
 use Derkosmonaut\TourTimesBundle\Resolver\Model\OfferPlan;
@@ -120,7 +121,7 @@ class OfferRepository
         }
 
         $range = $this->connection->fetchAssociative(
-            'SELECT date_from, date_until, max_dates FROM tl_tt_offer WHERE id = ?',
+            'SELECT date_from, date_until, max_dates, holiday_region FROM tl_tt_offer WHERE id = ?',
             [$offerId],
         ) ?: [];
 
@@ -142,7 +143,24 @@ class OfferRepository
             $validFrom,
             $validUntil,
             (int) ($range['max_dates'] ?? 0),
+            $this->holidays((string) ($range['holiday_region'] ?? ''), $timezone),
         );
+    }
+
+    /**
+     * Feiertage des Bundeslandes vom Vorjahr bis drei Jahre voraus.
+     *
+     * @return list<string>
+     */
+    private function holidays(string $region, DateTimeZone $timezone): array
+    {
+        if ('' === $region) {
+            return [];
+        }
+
+        $year = (int) (new DateTimeImmutable('now', $timezone))->format('Y');
+
+        return GermanHolidays::datesForYears($year - 1, $year + 3, $region);
     }
 
     /**

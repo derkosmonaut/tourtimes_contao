@@ -79,6 +79,7 @@ class OfferReaderController extends AbstractTourTimesController
         $template->set('labels', $labels);
         $template->set('offer', $view);
         $template->set('show_upcoming', $upcoming > 0);
+        $template->set('schema', $this->schema([$view], $model));
 
         $this->tagResponse([...self::TAGS, 'contao.db.tl_tt_offer.'.$offer['id']]);
 

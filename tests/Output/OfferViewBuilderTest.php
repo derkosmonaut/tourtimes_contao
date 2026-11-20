@@ -143,6 +143,35 @@ final class OfferViewBuilderTest extends TestCase
         self::assertSame('2026-11-16 15:00', OfferViewBuilder::nextUpcomingChange($views, $this->at('2026-11-16 12:00'))->format('Y-m-d H:i'));
     }
 
+    public function testNextDayWithDates(): void
+    {
+        $next = $this->builder()->buildNextDay($this->offers(), $this->at('2026-11-16 20:00'), false);
+
+        self::assertNotNull($next);
+        self::assertSame('2026-11-23', $next['date']->format('Y-m-d'), 'nur montags, also eine Woche später');
+        self::assertFalse($next['isTomorrow']);
+        self::assertSame(['10:00 Domführung', '11:00 Turmführung', '14:00 Domführung', '15:00 Turmführung'], $this->times($next['entries']));
+    }
+
+    public function testSchemaEvents(): void
+    {
+        $views = $this->builder()->buildOffers($this->offers(), $this->at('2026-11-16 08:00'), 2, true, []);
+        $views[0]['url'] = 'https://example.org/fuehrungen/dom';
+        $views[0]['ticketUrl'] = 'https://tickets.example.org';
+        $views[0]['teaser'] = 'Durch den <b>Dom</b> &amp; Kreuzgang';
+
+        $events = OfferViewBuilder::schemaEvents($views[0]);
+
+        self::assertCount(2, $events);
+        self::assertSame('Event', $events[0]['@type']);
+        self::assertSame('2026-11-16T10:00:00+01:00', $events[0]['startDate']);
+        self::assertSame('https://schema.org/EventScheduled', $events[0]['eventStatus']);
+        self::assertSame('https://schema.org/EventCancelled', $events[1]['eventStatus'], '14:00 ist abgesagt');
+        self::assertSame('Durch den Dom & Kreuzgang', $events[0]['description']);
+        self::assertSame('https://tickets.example.org', $events[0]['offers']['url']);
+        self::assertSame('Domführung', $events[0]['location']['name'], 'ohne Treffpunkt der Titel');
+    }
+
     public function testEndedOffersAreSkippedInList(): void
     {
         $plan = new OfferPlan(5, [new TimeSlot(9, [1], '10:00')], [], [], [], 60, '2026-11-02', null, 2);

@@ -10,6 +10,9 @@ services:
     Derkosmonaut\TourTimesBundle\Output\:
         resource: ../src/Output/
 
+    Derkosmonaut\TourTimesBundle\Diagnostics\:
+        resource: ../src/Diagnostics/
+
     Derkosmonaut\TourTimesBundle\Repository\:
         resource: ../src/Repository/
 

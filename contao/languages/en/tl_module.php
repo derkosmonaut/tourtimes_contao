@@ -11,3 +11,5 @@ $GLOBALS['TL_LANG']['tl_module']['tourtimes_empty'] = ['Text without dates', 'Sh
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_legend'] = 'Tours and dates';
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_reader_legend'] = 'Upcoming dates of the offer';
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_readerModule'] = ['Reader module', 'When an offer is selected, this reader module is shown instead of the list. Lets list and detail view share one page.'];
+$GLOBALS['TL_LANG']['tl_module']['tourtimes_show_next'] = ['Show next day', 'When there is nothing left today, the dates of the next day with dates appear below the message (e.g. "Tomorrow").'];
+$GLOBALS['TL_LANG']['tl_module']['tourtimes_jsonld'] = ['Output structured data', 'The displayed dates as schema.org events (JSON-LD) for search engines, cancelled ones marked as cancelled.'];

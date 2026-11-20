@@ -32,11 +32,18 @@ class TodayController extends AbstractTourTimesController
         $result = $this->viewBuilder->buildToday($offers, $now, $offset, '' !== (string) $model->row()['tourtimes_show_cancelled']);
 
         $empty = trim((string) $model->row()['tourtimes_empty']);
+        $showCancelled = '' !== (string) $model->row()['tourtimes_show_cancelled'];
+
+        // optional: nach dem Hinweis die Termine des nächsten Tages mit Terminen
+        $nextDay = '' !== (string) ($model->row()['tourtimes_show_next'] ?? '')
+            ? $this->viewBuilder->buildNextDay($offers, $now, $showCancelled)
+            : null;
 
         $template->set('labels', $labels);
         $template->set('entries', $result['entries']);
         $template->set('empty_text', '' !== $empty ? $empty : ($labels['empty_today'] ?? ''));
         $template->set('today', $now);
+        $template->set('next_day', $nextDay);
         // kurz nach Mitternacht neu laden (mit etwas Abstand, damit der Cache sicher abgelaufen ist)
         $template->set('reload_at', OfferViewBuilder::nextDay($now)->modify('+1 minute'));
 

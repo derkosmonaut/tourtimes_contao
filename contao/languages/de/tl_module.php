@@ -11,3 +11,5 @@ $GLOBALS['TL_LANG']['tl_module']['tourtimes_empty'] = ['Text ohne Termine', 'Ers
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_legend'] = 'Führungen und Termine';
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_reader_legend'] = 'Nächste Termine des Angebots';
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_readerModule'] = ['Lesermodul', 'Ist ein Angebot aufgerufen, erscheint statt der Liste dieses Detailmodul. So passen Liste und Detailansicht auf eine Seite.'];
+$GLOBALS['TL_LANG']['tl_module']['tourtimes_show_next'] = ['Nächsten Tag anzeigen', 'Steht heute nichts mehr an, erscheinen nach dem Hinweis die Termine des nächsten Tages mit Terminen (z. B. „Morgen“).'];
+$GLOBALS['TL_LANG']['tl_module']['tourtimes_jsonld'] = ['Strukturierte Daten ausgeben', 'Die angezeigten Termine als schema.org-Events (JSON-LD) für Suchmaschinen, abgesagte als abgesagt.'];

@@ -21,6 +21,10 @@ für Pläne, Saisons und Ausnahmen, aber für einzelne Termine statt Öffnungsfe
   - **Termine heute**: die heutigen Termine chronologisch; ein Termin verschwindet, sobald er beginnt,
     mit einstellbarem **Versatz** entsprechend früher (z. B. 10 Minuten für den Infomonitor an der Kasse)
   - **Detailansicht**: ein Angebot mit allen Angaben und den nächsten Terminen
+- **Feiertage**: je Angebot ein Bundesland wählen, an gesetzlichen Feiertagen entfallen die regulären Termine
+- **Vorschau im Backend** beim Angebot: die nächsten Termine mit Zustand und Hinweisen auf Unstimmigkeiten
+- **Sitemap**: Detailseiten der Angebote erscheinen in der Contao-Sitemap
+- **Strukturierte Daten**: angezeigte Termine als schema.org-Events (JSON-LD), abgesagte als abgesagt
 - Twig-Templates, Grundstil mit CSS-Variablen, deutsche und englische Texte
 
 ## Auflösungsreihenfolge
@@ -29,9 +33,10 @@ Die speziellere Ebene schlägt die allgemeinere:
 
 0. Zeitraum des Angebots (außerhalb gibt es keine Termine)
 1. Spontane Absage (schlägt alles, auch Zusatztermine)
-2. Ausnahme (Ausfall schlägt Verschiebung, Hinweise werden gesammelt, Zusatztermine kommen hinzu)
-3. Saisonplan (ersetzt den Standardplan vollständig, höhere Priorität gewinnt)
-4. Standardplan
+2. Ausnahme (Verschiebung oder Hinweis bestätigen einen Termin auch am Feiertag; Ausfall schlägt Verschiebung, Hinweise werden gesammelt, Zusatztermine kommen hinzu)
+3. Feiertag (keine regulären Termine, sofern beim Angebot ein Bundesland gewählt ist)
+4. Saisonplan (ersetzt den Standardplan vollständig, höhere Priorität gewinnt)
+5. Standardplan
 
 ## Anwendung
 
@@ -60,8 +65,12 @@ Alle Termine, die im Zeitraum beginnen, fallen aus. Zum Aufheben „Aktiv“ abw
 
 - *Angebotsliste*: Angebote auswählen (ohne Auswahl alle), Anzahl nächster Termine, Weiterleitungsseite zur Detailansicht.
   Optional ein *Lesermodul*: Ist ein Angebot aufgerufen, zeigt die Liste stattdessen die Detailansicht (Liste und Detail auf einer Seite)
-- *Termine heute*: Angebote, Versatz in Minuten, abgesagte Termine anzeigen oder ausblenden, Text ohne Termine
+- *Termine heute*: Angebote, Versatz in Minuten, abgesagte Termine anzeigen oder ausblenden, Text ohne Termine.
+  Mit „Nächsten Tag anzeigen“ erscheinen nach dem Hinweis die Termine des nächsten Tages mit Terminen (z. B. „Morgen“)
 - *Detailansicht*: auf der Weiterleitungsseite einbinden; das Angebot kommt über den Alias in der URL
+
+Für die Sitemap zählen die Weiterleitungsseiten der Module „Angebotsliste“ und „Termine heute“. Liegen Liste und Detail
+auf einer Seite (Lesermodul), trage diese Seite auch als Weiterleitungsseite ein.
 
 Abgesagte Termine erscheinen durchgestrichen mit „Fällt aus“ und Grund, wenn „Abgesagte Termine anzeigen“ aktiv ist.
 

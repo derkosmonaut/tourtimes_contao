@@ -3,7 +3,7 @@
  *
  * - Blendet Einträge aus, sobald ihr Zeitpunkt (data-tourtimes-hide-at, Unix-Zeit) erreicht ist,
  *   ohne die Seite neu zu laden.
- * - Zeigt den Hinweistext, wenn keine Einträge mehr übrig sind.
+ * - Zeigt den Hinweistext (und optional den nächsten Tag), wenn keine Einträge mehr übrig sind.
  * - Lädt die Seite nach Mitternacht neu (data-tourtimes-reload-at), damit der neue Tag erscheint.
  */
 (function () {
@@ -27,6 +27,12 @@
 
     if (empty) {
       empty.hidden = visible > 0;
+    }
+
+    var next = list.querySelector('.tourtimes-today__next');
+
+    if (next) {
+      next.hidden = visible > 0;
     }
 
     var reloadAt = parseInt(list.getAttribute('data-tourtimes-reload-at'), 10) * 1000;

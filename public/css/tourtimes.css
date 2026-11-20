@@ -145,6 +145,13 @@
   color: var(--tourtimes-muted);
 }
 
-.tourtimes-today__empty[hidden] {
+.tourtimes-today__empty[hidden],
+.tourtimes-today__next[hidden] {
   display: none;
+}
+
+.tourtimes-today__next-title {
+  display: block;
+  margin-top: var(--tourtimes-gap);
+  font-weight: bold;
 }

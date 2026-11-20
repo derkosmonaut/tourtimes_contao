@@ -22,34 +22,31 @@
     <ol class="tourtimes-today__list">
       {% for entry in entries %}
         <li class="tourtimes-today__item tourtimes-today__item--{{ entry.state }}" data-tourtimes-hide-at="{{ entry.hideAt|date('U') }}">
-          <time class="tourtimes-today__time" datetime="{{ entry.start|date('Y-m-d\\TH:i') }}">
-            {{- entry.start|date('H:i') }}{% if labels.time_suffix %} {{ labels.time_suffix }}{% endif -%}
-          </time>
-
-          <span class="tourtimes-today__offer">
-            {%- if entry.offer.url %}<a href="{{ entry.offer.url }}">{{ entry.offer.title }}</a>{% else %}{{ entry.offer.title }}{% endif -%}
-          </span>
-
-          {% if entry.offer.meetingPoint %}
-            <span class="tourtimes-today__meeting-point">{{ labels.meeting_point }}: {{ entry.offer.meetingPoint }}</span>
-          {% endif %}
-
-          {% if entry.cancelled %}
-            <span class="tourtimes-badge tourtimes-badge--cancelled">{{ labels.cancelled }}</span>
-          {% elseif entry.changed %}
-            <span class="tourtimes-badge tourtimes-badge--changed">{{ labels.changed }}</span>
-            {% if entry.originalStart %}<span class="tourtimes-date__original">{{ labels.changed_from }} {{ entry.originalStart|date('H:i') }}</span>{% endif %}
-          {% elseif entry.extra %}
-            <span class="tourtimes-badge tourtimes-badge--extra">{{ labels.extra }}</span>
-          {% endif %}
-
-          {% for note in entry.notes %}
-            <span class="tourtimes-date__note">{{ note }}</span>
-          {% endfor %}
+          {% include "@Contao/tourtimes/_today_entry.html.twig" %}
         </li>
       {% endfor %}
     </ol>
 
     <p class="tourtimes-today__empty"{% if entries is not empty %} hidden{% endif %}>{{ empty_text }}</p>
+
+    {# nächster Tag mit Terminen: sichtbar, sobald heute nichts mehr ansteht #}
+    {% if next_day %}
+      <div class="tourtimes-today__next"{% if entries is not empty %} hidden{% endif %}>
+        <span class="tourtimes-today__next-title">
+          {%- if next_day.isTomorrow -%}
+            {{ labels.tomorrow }}
+          {%- else -%}
+            {{ labels.day_long[next_day.weekday] }}, {{ next_day.date|date(labels.date_format) }}
+          {%- endif -%}
+        </span>
+        <ol class="tourtimes-today__list">
+          {% for entry in next_day.entries %}
+            <li class="tourtimes-today__item tourtimes-today__item--{{ entry.state }}">
+              {% include "@Contao/tourtimes/_today_entry.html.twig" %}
+            </li>
+          {% endfor %}
+        </ol>
+      </div>
+    {% endif %}
   </div>
 {% endblock %}

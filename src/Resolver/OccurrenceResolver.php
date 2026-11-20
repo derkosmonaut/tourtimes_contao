@@ -17,6 +17,7 @@ use Derkosmonaut\TourTimesBundle\Resolver\Model\TimeSlot;
  * Reihenfolge, die speziellere Ebene gewinnt:
  *   1. Spontane Absage (Zeitraum, ganzes Angebot oder einzelne Slots)
  *   2. Ausnahme       (Datum: Ausfall, Verschiebung, Hinweis, Zusatztermin)
+ *   2a. Feiertag      (keine regulären Termine, schwächer als eine Ausnahme)
  *   3. Saison         (ersetzt den Standardplan, höhere Priorität gewinnt)
  *   4. Standardplan
  *
@@ -142,9 +143,15 @@ final class OccurrenceResolver
         ));
 
         $occurrences = [];
+        $holiday = \in_array($ymd, $plan->holidays, true);
 
         foreach ($this->getRegularSlots($plan, $day) ?? [] as $slot) {
             if (!\in_array($weekday, $slot->weekdays, true)) {
+                continue;
+            }
+
+            // Feiertag: der Termin entfällt, außer eine Verschiebung oder ein Hinweis bestätigt ihn
+            if ($holiday && !$this->confirmedBy($slot, $exceptions)) {
                 continue;
             }
 
@@ -315,6 +322,20 @@ final class OccurrenceResolver
         $occurrence = new Occurrence($plan->offerId, $slot->id, $start, $end, $state, $originalStart, $notes);
 
         return $cancelled ? $occurrence->cancel('') : $occurrence;
+    }
+
+    /**
+     * @param list<DayException> $exceptions
+     */
+    private function confirmedBy(TimeSlot $slot, array $exceptions): bool
+    {
+        foreach ($exceptions as $exception) {
+            if (\in_array($exception->type, [DayException::SHIFT, DayException::NOTE], true) && $exception->appliesToSlot($slot->id)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
