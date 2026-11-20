@@ -315,4 +315,18 @@ final class OccurrenceResolverTest extends TestCase
         $confirmed = $this->resolver->getDay($withHoliday([new DayException('2026-11-16', null, false, DayException::NOTE, [1], null, null, 'Feiertagsführung')]), $this->at('2026-11-16'));
         self::assertSame(['Feiertagsführung'], $confirmed[0]->notes);
     }
+
+    public function testOfferWideNoteAlsoOnExtra(): void
+    {
+        $plan = new OfferPlan(1, [new TimeSlot(1, [1], '10:00')], [], [
+            new DayException('2026-11-16', null, false, DayException::NOTE, [], null, null, 'Treffpunkt am Seitenportal'),
+            new DayException('2026-11-16', null, false, DayException::NOTE, [1], null, null, 'nur 10 Uhr'),
+            new DayException('2026-11-16', null, false, DayException::EXTRA, [], '15:00', null, 'Sonderführung'),
+        ]);
+
+        $day = $this->resolver->getDay($plan, $this->at('2026-11-16'));
+
+        self::assertSame(['Treffpunkt am Seitenportal', 'nur 10 Uhr'], $day[0]->notes);
+        self::assertSame(['Sonderführung', 'Treffpunkt am Seitenportal'], $day[1]->notes);
+    }
 }

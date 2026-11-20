@@ -1,6 +1,6 @@
 # tourtimes_contao
 
-*** In Entwicklung: noch nicht in einer Contao-Installation getestet ***
+*** Release Candidate: im Einsatz getestet, aber noch nicht als stabil gekennzeichnet ***
 
 Regelmäßig wiederkehrende Termine wie Führungen für Contao (Bundle für Contao 5.7 oder neuer, PHP 8.5).
 Schwester-Erweiterung von [opentimes_contao](https://github.com/derkosmonaut/opentimes_contao), gleiche Logik
@@ -79,6 +79,14 @@ Abgesagte Termine erscheinen durchgestrichen mit „Fällt aus“ und Grund, wen
 Die Tagesliste blendet vergangene Termine auch ohne Neuladen aus (kleines Skript, prüft alle 15 Sekunden)
 und lädt die Seite kurz nach Mitternacht neu. Der Seiten-Cache läuft bis zur nächsten Änderung ab
 (30 Sekunden bis eine Stunde), Änderungen im Backend leeren ihn sofort.
+
+## Installation
+
+```bash
+composer require derkosmonaut/tourtimes-contao
+```
+
+Oder im Contao Manager nach „tourtimes“ suchen. Danach die Datenbank aktualisieren.
 
 ## Entwicklung
 

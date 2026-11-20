@@ -164,15 +164,16 @@ final class OccurrenceResolver
             }
 
             [$start, $end] = $this->createTimes($day, $exception->starts, $exception->ends, $plan->duration);
-            $occurrences[] = new Occurrence(
-                $plan->offerId,
-                null,
-                $start,
-                $end,
-                Occurrence::EXTRA,
-                null,
-                '' !== $exception->note ? [$exception->note] : [],
-            );
+            $notes = '' !== $exception->note ? [$exception->note] : [];
+
+            // Hinweise für das ganze Angebot gelten auch für Zusatztermine
+            foreach ($exceptions as $other) {
+                if (DayException::NOTE === $other->type && [] === $other->slotIds && '' !== $other->note && !\in_array($other->note, $notes, true)) {
+                    $notes[] = $other->note;
+                }
+            }
+
+            $occurrences[] = new Occurrence($plan->offerId, null, $start, $end, Occurrence::EXTRA, null, $notes);
         }
 
         // spontane Absagen zuletzt: sie schlagen alles, auch Zusatztermine
