@@ -9,3 +9,4 @@ $GLOBALS['TL_LANG']['tl_module']['tourtimes_show_cancelled'] = ['Abgesagte Termi
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_empty'] = ['Text ohne Termine', 'Erscheint, wenn heute keine Termine mehr anstehen. Leer = Standardtext.'];
 
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_legend'] = 'Führungen und Termine';
+$GLOBALS['TL_LANG']['tl_module']['tourtimes_reader_legend'] = 'Nächste Termine des Angebots';

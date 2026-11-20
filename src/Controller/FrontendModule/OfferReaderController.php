@@ -10,10 +10,10 @@ use Contao\CoreBundle\Image\Studio\Studio;
 use Contao\CoreBundle\Routing\ContentUrlGenerator;
 use Contao\CoreBundle\Routing\ResponseContext\HtmlHeadBag\HtmlHeadBag;
 use Contao\CoreBundle\Routing\ResponseContext\ResponseContextAccessor;
+use Contao\CoreBundle\String\HtmlDecoder;
 use Contao\CoreBundle\Twig\FragmentTemplate;
 use Contao\Input;
 use Contao\ModuleModel;
-use Contao\StringUtil;
 use DateTimeImmutable;
 use Derkosmonaut\TourTimesBundle\Output\OfferViewBuilder;
 use Derkosmonaut\TourTimesBundle\Repository\OfferRepository;
@@ -32,6 +32,7 @@ class OfferReaderController extends AbstractTourTimesController
         ContentUrlGenerator $urlGenerator,
         Studio $studio,
         private readonly ResponseContextAccessor $responseContextAccessor,
+        private readonly HtmlDecoder $htmlDecoder,
     ) {
         parent::__construct($repository, $viewBuilder, $urlGenerator, $studio);
     }
@@ -68,7 +69,7 @@ class OfferReaderController extends AbstractTourTimesController
             $head->setTitle($offer['title']);
 
             if ('' !== $offer['teaser']) {
-                $head->setMetaDescription(StringUtil::inputEncodedToPlainText($offer['teaser']));
+                $head->setMetaDescription($this->htmlDecoder->inputEncodedToPlainText($offer['teaser']));
             }
         }
 

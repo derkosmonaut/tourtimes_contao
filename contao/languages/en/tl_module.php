@@ -9,3 +9,4 @@ $GLOBALS['TL_LANG']['tl_module']['tourtimes_show_cancelled'] = ['Show cancelled 
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_empty'] = ['Text without dates', 'Shown when there are no more dates today. Empty = default text.'];
 
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_legend'] = 'Tours and dates';
+$GLOBALS['TL_LANG']['tl_module']['tourtimes_reader_legend'] = 'Upcoming dates of the offer';

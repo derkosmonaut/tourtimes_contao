@@ -24,7 +24,7 @@ $dca['palettes']['tourtimes_today'] =
 // Detailansicht eines Angebots (Alias aus der URL)
 $dca['palettes']['tourtimes_reader'] =
     '{title_legend},name,type;'
-    .'{tourtimes_legend},tourtimes_upcoming,tourtimes_show_cancelled;'
+    .'{tourtimes_reader_legend},tourtimes_upcoming,tourtimes_show_cancelled;'
     .'{image_legend:hide},imgSize;'
     .'{template_legend:hide},customTpl;'
     .'{protected_legend:hide},protected;'
