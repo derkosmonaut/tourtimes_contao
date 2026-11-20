@@ -10,3 +10,4 @@ $GLOBALS['TL_LANG']['tl_module']['tourtimes_empty'] = ['Text ohne Termine', 'Ers
 
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_legend'] = 'Führungen und Termine';
 $GLOBALS['TL_LANG']['tl_module']['tourtimes_reader_legend'] = 'Nächste Termine des Angebots';
+$GLOBALS['TL_LANG']['tl_module']['tourtimes_readerModule'] = ['Lesermodul', 'Ist ein Angebot aufgerufen, erscheint statt der Liste dieses Detailmodul. So passen Liste und Detailansicht auf eine Seite.'];

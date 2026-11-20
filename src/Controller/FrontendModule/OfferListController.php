@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Derkosmonaut\TourTimesBundle\Controller\FrontendModule;
 
+use Contao\Controller;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Twig\FragmentTemplate;
+use Contao\Input;
 use Contao\ModuleModel;
 use DateTimeImmutable;
 use Derkosmonaut\TourTimesBundle\Output\OfferViewBuilder;
@@ -20,6 +22,13 @@ class OfferListController extends AbstractTourTimesController
 {
     protected function getResponse(FragmentTemplate $template, ModuleModel $model, Request $request): Response
     {
+        // Contao-Standard: ist ein Angebot aufgerufen, erscheint statt der Liste das Lesermodul
+        $readerModule = (int) ($model->row()['tourtimes_readerModule'] ?? 0);
+
+        if ($readerModule > 0 && '' !== (string) Input::get('auto_item', false, true)) {
+            return new Response(Controller::getFrontendModule($readerModule, (string) ($model->inColumn ?? 'main')));
+        }
+
         $now = new DateTimeImmutable('now', OfferViewBuilder::timezone());
         $labels = $this->labels();
         $upcoming = (int) $model->row()['tourtimes_upcoming'];

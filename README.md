@@ -58,7 +58,8 @@ Alle Termine, die im Zeitraum beginnen, fallen aus. Zum Aufheben „Aktiv“ abw
 
 **5. Ausgabe.** Frontend-Modul anlegen und einbinden:
 
-- *Angebotsliste*: Angebote auswählen (ohne Auswahl alle), Anzahl nächster Termine, Weiterleitungsseite zur Detailansicht
+- *Angebotsliste*: Angebote auswählen (ohne Auswahl alle), Anzahl nächster Termine, Weiterleitungsseite zur Detailansicht.
+  Optional ein *Lesermodul*: Ist ein Angebot aufgerufen, zeigt die Liste stattdessen die Detailansicht (Liste und Detail auf einer Seite)
 - *Termine heute*: Angebote, Versatz in Minuten, abgesagte Termine anzeigen oder ausblenden, Text ohne Termine
 - *Detailansicht*: auf der Weiterleitungsseite einbinden; das Angebot kommt über den Alias in der URL
 

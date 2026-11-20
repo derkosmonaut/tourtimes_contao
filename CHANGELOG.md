@@ -3,9 +3,11 @@
 ## Unveröffentlicht
 
 ### Neu
+- Angebotsliste: Einstellung „Lesermodul“ (Contao-Standard). Ist ein Angebot aufgerufen, erscheint statt der Liste die Detailansicht, Liste und Detail passen so auf eine Seite. Neue Spalte `tourtimes_readerModule` in `tl_module`
 - Zeitraum je Angebot: „Termine ab“, „Termine bis“ und „Endet nach X Terminen“. Abgelaufene Angebote verschwinden aus der Angebotsliste, die Detailansicht zeigt den Zeitraum. Neue Spalten `date_from`, `date_until`, `max_dates` in `tl_tt_offer` (Datenbank aktualisieren)
 
 ### Behoben
+- Detailansicht: 404, weil der Alias aus der URL als unbenutzt galt
 - Detailansicht: Absturz durch `StringUtil::inputEncodedToPlainText()` (in Contao 5 über `HtmlDecoder`)
 - Detailansicht: „Anzahl nächster Termine“ = 0 blendet die Termine aus; Einstellungen unter eigener Überschrift
 

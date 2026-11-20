@@ -39,7 +39,8 @@ class OfferReaderController extends AbstractTourTimesController
 
     protected function getResponse(FragmentTemplate $template, ModuleModel $model, Request $request): Response
     {
-        $alias = (string) Input::get('auto_item', false, true);
+        // ohne "keepUnused": damit gilt der Alias als verwendet, sonst antwortet Contao mit 404
+        $alias = (string) Input::get('auto_item');
 
         // ohne Alias (z. B. Seite direkt aufgerufen) bleibt das Modul leer
         if ('' === $alias) {
