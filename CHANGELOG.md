@@ -1,26 +1,32 @@
 # Changelog
 
-## Unveröffentlicht
+## 0.1.0 – 2026-11-20 (Release Candidate)
 
-### Neu
-- Feiertage je Angebot (Bundesland): an gesetzlichen Feiertagen entfallen die regulären Termine; Zusatztermine sowie Ausnahmen mit anderer Uhrzeit oder Hinweis haben Vorrang. Neue Spalte `holiday_region` in `tl_tt_offer`
-- Vorschau im Backend beim Angebot: nächste zehn Termine mit Zustand und Hinweisen (kein Plan, leerer Plan, abgelaufen, noch nicht begonnen, Anzahl nicht erreicht, Absage aktiv/geplant, keine Termine in Sicht)
-- Sitemap: Detailseiten aller veröffentlichten, nicht abgelaufenen Angebote (über die Weiterleitungsseiten der Module)
-- Strukturierte Daten: angezeigte Termine als schema.org-Events in Angebotsliste und Detailansicht (abschaltbar, neue Spalte `tourtimes_jsonld` in `tl_module`)
-- Termine heute: „Nächsten Tag anzeigen“ zeigt nach dem Hinweis die Termine des nächsten Tages mit Terminen, auch ohne Neuladen (neue Spalte `tourtimes_show_next` in `tl_module`)
-- Angebotsliste: Einstellung „Lesermodul“ (Contao-Standard). Ist ein Angebot aufgerufen, erscheint statt der Liste die Detailansicht, Liste und Detail passen so auf eine Seite. Neue Spalte `tourtimes_readerModule` in `tl_module`
-- Zeitraum je Angebot: „Termine ab“, „Termine bis“ und „Endet nach X Terminen“. Abgelaufene Angebote verschwinden aus der Angebotsliste, die Detailansicht zeigt den Zeitraum. Neue Spalten `date_from`, `date_until`, `max_dates` in `tl_tt_offer` (Datenbank aktualisieren)
+Erste Version, in einer Contao-5.7-Installation getestet.
 
-### Behoben
-- Detailansicht: 404, weil der Alias aus der URL als unbenutzt galt
-- Detailansicht: Absturz durch `StringUtil::inputEncodedToPlainText()` (in Contao 5 über `HtmlDecoder`)
-- Detailansicht: „Anzahl nächster Termine“ = 0 blendet die Termine aus; Einstellungen unter eigener Überschrift
-
-### Neu
+### Angebote und Pläne
 - Angebote mit Beschreibung, Bild, Treffpunkt, Dauer, Preis, Sprache und Ticketlink
-- Standard- und Saisonpläne mit Zeitslots (Wochentage, Beginn, optional Ende und Hinweis)
-- Ausnahmen: Ausfall, andere Uhrzeit, Hinweis und Zusatztermin, für das ganze Angebot oder einzelne Slots
-- Spontane Absagen mit Hinweistext, für das ganze Angebot oder einzelne Slots
-- Frontend-Module „Angebotsliste“, „Termine heute“ (mit Versatz, für Infomonitore) und „Angebot-Detailansicht“
+- Standard- und Saisonpläne (Zeitraum, jährlich wiederholbar, Priorität) mit Zeitslots: Wochentage, Beginn, optional Ende und fester Hinweis
+- Zeitraum je Angebot: „Termine ab“, „Termine bis“ und „Endet nach X Terminen“ (jeder Termin zählt, auch abgesagte und Zusatztermine); abgelaufene Angebote verschwinden aus der Angebotsliste
+- Feiertage je Angebot (Bundesland): an gesetzlichen Feiertagen entfallen die regulären Termine; Zusatztermine und Ausnahmen mit anderer Uhrzeit oder Hinweis haben Vorrang
+
+### Ausnahmen und Absagen
+- Ausnahmen für Tage oder Zeiträume: Ausfall, andere Uhrzeit, Hinweis und Zusatztermin, für das ganze Angebot oder einzelne Slots; Hinweise für das ganze Angebot gelten auch für Zusatztermine
+- Spontane Absagen mit Hinweistext, für das ganze Angebot oder einzelne Slots, bis auf Weiteres oder mit Ende
+
+### Ausgabe
+- Frontend-Modul „Angebotsliste“ mit regelmäßigen Zeiten und nächsten Terminen, optional mit Lesermodul (Liste und Detail auf einer Seite)
+- Frontend-Modul „Termine heute“: vergangene Termine verschwinden (mit Versatz in Minuten), auch ohne Neuladen; optional der nächste Tag mit Terminen nach dem Hinweis; Neuladen nach Mitternacht (Infomonitor)
+- Frontend-Modul „Angebot-Detailansicht“
+- Strukturierte Daten: angezeigte Termine als schema.org-Events (abschaltbar)
+- Sitemap: Detailseiten aller veröffentlichten, nicht abgelaufenen Angebote
+- Cache bis zur nächsten Änderung, Cache-Tags für Änderungen im Backend
 - Twig-Templates, Grundstil mit CSS-Variablen, deutsche und englische Texte
-- Tests (Resolver, Ausgabe, Datenbank mit SQLite), PHPStan und Release-Workflow in GitHub Actions
+
+### Backend
+- Vorschau beim Angebot: nächste zehn Termine mit Zustand und Hinweisen auf Unstimmigkeiten
+- Schnellauswahl der Wochentage, Alias aus dem Titel
+- Beim Duplizieren eines Angebots werden Ausnahmen und Absagen für einzelne Slots den kopierten Slots zugeordnet
+
+### Entwicklung
+- Tests (Resolver, Ausgabe, Datenbank mit SQLite, Feiertage), PHPStan und Release-Workflow in GitHub Actions
