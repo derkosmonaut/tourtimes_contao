@@ -11,6 +11,8 @@ für Pläne, Saisons und Ausnahmen, aber für einzelne Termine statt Öffnungsfe
 ## Funktionsumfang
 
 - Beliebig viele **Angebote** (z. B. Führungen) mit Beschreibung, Bild, Treffpunkt, Dauer, Preis, Sprache und Ticketlink
+- **Feste Startzeit oder Zeitfenster** je Angebot: Führungen beginnen zur Uhrzeit, Audioguides o. Ä. lassen sich
+  jederzeit im Zeitfenster starten (z. B. 10–12 Uhr) und bleiben bis zum Ende sichtbar
 - **Zeitraum je Angebot**: „Termine ab“, „Termine bis“ und „Endet nach X Terminen“, z. B. eine Sommerführung
   an fünf Montagen; danach verschwindet das Angebot von selbst aus der Liste
 - **Standard- und Saisonpläne** je Angebot (Zeitraum, jährlich wiederholbar, Priorität)
@@ -44,6 +46,14 @@ Die speziellere Ebene schlägt die allgemeinere:
 
 **1. Angebot anlegen.** Unter „Inhalte → Führungen“ ein Angebot mit Titel, Texten und Details anlegen.
 Die Dauer gilt für alle Termine ohne eigenes Ende.
+
+Unter „Art der Termine“ wählst du zwischen **fester Startzeit** (z. B. Führung) und **Zeitfenster** (z. B. Audioguide).
+Bei Zeitfenstern:
+
+- erscheint überall der Zeitraum, z. B. „10:00–12:00 Uhr · Start jederzeit“, während er läuft „jetzt möglich bis 12:00 Uhr“
+- verschwindet der Termin erst am Ende; der Versatz zählt vom Ende rückwärts (10 Minuten = letzter Start 11:50)
+- gilt ein Fenster als abgesagt, sobald eine spontane Absage es berührt
+- braucht jeder Zeitslot ein Ende; die Dauer ist dann nur eine Angabe für Besucher
 Unter „Zeitraum“ lässt sich das Angebot begrenzen: „Termine ab“ und „Termine bis“ und/oder „Endet nach X Terminen“
 (gezählt ab „Termine ab“; jeder Termin zählt, auch abgesagte und Zusatztermine).
 

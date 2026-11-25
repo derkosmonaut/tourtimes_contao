@@ -329,4 +329,70 @@ final class OccurrenceResolverTest extends TestCase
         self::assertSame(['Treffpunkt am Seitenportal', 'nur 10 Uhr'], $day[0]->notes);
         self::assertSame(['Sonderführung', 'Treffpunkt am Seitenportal'], $day[1]->notes);
     }
+
+    /**
+     * Audioguide als Zeitfenster: Mo 10–12 Uhr (Slot 1), Mo 14:00 ohne Ende (Slot 2), Dauer 60 Min. nur Angabe.
+     *
+     * @param list<Cancellation> $cancellations
+     */
+    private function audioPlan(array $cancellations = []): OfferPlan
+    {
+        return new OfferPlan(
+            3,
+            [new TimeSlot(1, [1], '10:00', '12:00'), new TimeSlot(2, [1], '14:00')],
+            [],
+            [],
+            $cancellations,
+            60,
+            window: true,
+        );
+    }
+
+    public function testWindowKeepsSlotEndAndIgnoresDuration(): void
+    {
+        $day = $this->resolver->getDay($this->audioPlan(), $this->at('2026-11-16'));
+
+        self::assertTrue($day[0]->window);
+        self::assertSame('12:00', $day[0]->end?->format('H:i'));
+        self::assertNull($day[1]->end, 'ohne Ende keine Dauer: verhält sich wie feste Startzeit');
+        self::assertSame('14:00', $day[1]->until()->format('H:i'));
+    }
+
+    public function testWindowVisibleUntilEndWithOffset(): void
+    {
+        $window = $this->resolver->getDay($this->audioPlan(), $this->at('2026-11-16'))[0];
+
+        self::assertTrue(OccurrenceResolver::isVisible($window, $this->at('2026-11-16 11:00')));
+        self::assertTrue($window->isRunning($this->at('2026-11-16 11:00')));
+        self::assertFalse($window->isRunning($this->at('2026-11-16 09:59')));
+        self::assertSame('11:50', OccurrenceResolver::hideAt($window, 10)->format('H:i'), 'Versatz = letzter Start vor dem Ende');
+        self::assertFalse(OccurrenceResolver::isVisible($window, $this->at('2026-11-16 11:50'), 10));
+    }
+
+    public function testRunningWindowIsUpcoming(): void
+    {
+        $upcoming = $this->resolver->getUpcoming($this->audioPlan(), $this->at('2026-11-16 11:00'), 1);
+
+        self::assertSame('2026-11-16 10:00', $upcoming[0]->start->format('Y-m-d H:i'));
+    }
+
+    public function testCancellationOverlappingWindow(): void
+    {
+        $plan = $this->audioPlan([new Cancellation($this->at('2026-11-16 11:00'), $this->at('2026-11-16 13:00'), true, 'Technik')]);
+        $day = $this->resolver->getDay($plan, $this->at('2026-11-16'));
+
+        self::assertTrue($day[0]->isCancelled(), 'Absage ab 11 Uhr berührt das Fenster 10–12');
+        self::assertFalse($day[1]->isCancelled());
+
+        $after = $this->audioPlan([new Cancellation($this->at('2026-11-16 12:00'), null, true)]);
+        self::assertFalse($this->resolver->getDay($after, $this->at('2026-11-16'))[0]->isCancelled(), 'Fenster endet genau bei Absagebeginn');
+    }
+
+    public function testWindowEndsAfterLastWindowEnd(): void
+    {
+        $plan = new OfferPlan(3, [new TimeSlot(1, [1], '10:00', '12:00')], [], [], [], 0, '2026-11-16', null, 1, [], true);
+
+        self::assertFalse($this->resolver->hasEnded($plan, $this->at('2026-11-16 11:00')));
+        self::assertTrue($this->resolver->hasEnded($plan, $this->at('2026-11-16 12:00')));
+    }
 }

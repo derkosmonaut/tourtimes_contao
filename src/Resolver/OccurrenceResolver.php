@@ -38,7 +38,7 @@ final class OccurrenceResolver
     /** Wie weit nach dem X-ten Termin gesucht wird (Tage ab "Termine ab"). */
     private const COUNT_HORIZON_DAYS = 1100;
 
-    /** @var \WeakMap<OfferPlan, DateTimeImmutable|null> Beginn des letzten Termins je Plan */
+    /** @var \WeakMap<OfferPlan, Occurrence|null> letzter Termin je Plan */
     private \WeakMap $lastStarts;
 
     public function __construct()
@@ -81,9 +81,9 @@ final class OccurrenceResolver
             return false;
         }
 
-        $last = $this->getLastStart($plan, $now);
+        $last = $this->getLastOccurrence($plan, $now);
 
-        return null !== $last && $now >= $last;
+        return null !== $last && $now >= $last->until();
     }
 
     /**
@@ -91,6 +91,14 @@ final class OccurrenceResolver
      * (keine Anzahl, kein Startdatum oder X Termine im Suchzeitraum nicht erreicht).
      */
     public function getLastStart(OfferPlan $plan, DateTimeImmutable $reference): ?DateTimeImmutable
+    {
+        return $this->getLastOccurrence($plan, $reference)?->start;
+    }
+
+    /**
+     * Der letzte Termin bei "Endet nach X Terminen"; null = keine Begrenzung.
+     */
+    public function getLastOccurrence(OfferPlan $plan, DateTimeImmutable $reference): ?Occurrence
     {
         if ($plan->maxDates < 1 || null === $plan->validFrom) {
             return null;
@@ -113,7 +121,7 @@ final class OccurrenceResolver
 
             foreach ($this->buildDay($plan, $current) as $occurrence) {
                 if (++$count === $plan->maxDates) {
-                    $last = $occurrence->start;
+                    $last = $occurrence;
                     break;
                 }
             }
@@ -137,6 +145,9 @@ final class OccurrenceResolver
         }
         $weekday = (int) $day->format('N');
 
+        // bei Zeitfenstern bestimmt die Dauer kein Ende
+        $duration = $plan->window ? 0 : $plan->duration;
+
         $exceptions = array_values(array_filter(
             $plan->exceptions,
             fn (DayException $e): bool => $this->inRange($ymd, $e->start, $e->stop, $e->recurring),
@@ -155,7 +166,7 @@ final class OccurrenceResolver
                 continue;
             }
 
-            $occurrences[] = $this->applyExceptions($plan, $slot, $day, $exceptions);
+            $occurrences[] = $this->applyExceptions($plan, $slot, $day, $exceptions, $duration);
         }
 
         foreach ($exceptions as $exception) {
@@ -163,7 +174,7 @@ final class OccurrenceResolver
                 continue;
             }
 
-            [$start, $end] = $this->createTimes($day, $exception->starts, $exception->ends, $plan->duration);
+            [$start, $end] = $this->createTimes($day, $exception->starts, $exception->ends, $duration);
             $notes = '' !== $exception->note ? [$exception->note] : [];
 
             // Hinweise für das ganze Angebot gelten auch für Zusatztermine
@@ -173,7 +184,7 @@ final class OccurrenceResolver
                 }
             }
 
-            $occurrences[] = new Occurrence($plan->offerId, null, $start, $end, Occurrence::EXTRA, null, $notes);
+            $occurrences[] = new Occurrence($plan->offerId, null, $start, $end, Occurrence::EXTRA, null, $notes, $plan->window);
         }
 
         // spontane Absagen zuletzt: sie schlagen alles, auch Zusatztermine
@@ -210,7 +221,7 @@ final class OccurrenceResolver
     }
 
     /**
-     * Die nächsten Termine, die nach $now beginnen.
+     * Die nächsten Termine, die nach $now beginnen (Zeitfenster: die noch nicht zu Ende sind).
      *
      * @return list<Occurrence>
      */
@@ -226,7 +237,8 @@ final class OccurrenceResolver
 
         for ($i = 0; $i < $horizonDays && \count($result) < $limit; ++$i) {
             foreach ($this->getDay($plan, $day->modify('+'.$i.' day')) as $occurrence) {
-                if ($occurrence->start <= $now || (!$includeCancelled && $occurrence->isCancelled())) {
+                // feste Startzeit: noch nicht begonnen; Zeitfenster: noch nicht zu Ende
+                if ($occurrence->until() <= $now || (!$includeCancelled && $occurrence->isCancelled())) {
                     continue;
                 }
 
@@ -242,7 +254,7 @@ final class OccurrenceResolver
     }
 
     /**
-     * Ein Termin bleibt sichtbar, bis er (abzüglich Versatz) beginnt.
+     * Ein Termin bleibt sichtbar, bis er (abzüglich Versatz) beginnt bzw. sein Zeitfenster endet.
      */
     public static function isVisible(Occurrence $occurrence, DateTimeImmutable $now, int $offsetMinutes = 0): bool
     {
@@ -250,11 +262,14 @@ final class OccurrenceResolver
     }
 
     /**
-     * Zeitpunkt, ab dem ein Termin ausgeblendet wird.
+     * Zeitpunkt, ab dem ein Termin ausgeblendet wird: Beginn, bei Zeitfenstern das Ende,
+     * jeweils abzüglich Versatz (bei Zeitfenstern: letzter Start vor dem Ende).
      */
     public static function hideAt(Occurrence $occurrence, int $offsetMinutes = 0): DateTimeImmutable
     {
-        return $offsetMinutes > 0 ? $occurrence->start->modify('-'.$offsetMinutes.' minutes') : $occurrence->start;
+        $until = $occurrence->until();
+
+        return $offsetMinutes > 0 ? $until->modify('-'.$offsetMinutes.' minutes') : $until;
     }
 
     /**
@@ -292,9 +307,9 @@ final class OccurrenceResolver
     /**
      * @param list<DayException> $exceptions Ausnahmen dieses Tages
      */
-    private function applyExceptions(OfferPlan $plan, TimeSlot $slot, DateTimeImmutable $day, array $exceptions): Occurrence
+    private function applyExceptions(OfferPlan $plan, TimeSlot $slot, DateTimeImmutable $day, array $exceptions, int $duration): Occurrence
     {
-        [$start, $end] = $this->createTimes($day, $slot->starts, $slot->ends, $plan->duration);
+        [$start, $end] = $this->createTimes($day, $slot->starts, $slot->ends, $duration);
         $notes = '' !== $slot->note ? [$slot->note] : [];
         $state = Occurrence::SCHEDULED;
         $originalStart = null;
@@ -306,7 +321,7 @@ final class OccurrenceResolver
             }
 
             if (DayException::SHIFT === $exception->type && null !== $exception->starts) {
-                [$start, $end] = $this->createTimes($day, $exception->starts, $exception->ends ?? $this->shiftedEnd($slot, $exception->starts), $plan->duration);
+                [$start, $end] = $this->createTimes($day, $exception->starts, $exception->ends ?? $this->shiftedEnd($slot, $exception->starts), $duration);
                 $originalStart ??= $this->createTimes($day, $slot->starts, null, 0)[0];
                 $state = Occurrence::CHANGED;
             }
@@ -320,7 +335,7 @@ final class OccurrenceResolver
             }
         }
 
-        $occurrence = new Occurrence($plan->offerId, $slot->id, $start, $end, $state, $originalStart, $notes);
+        $occurrence = new Occurrence($plan->offerId, $slot->id, $start, $end, $state, $originalStart, $notes, $plan->window);
 
         return $cancelled ? $occurrence->cancel('') : $occurrence;
     }

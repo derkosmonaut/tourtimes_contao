@@ -43,6 +43,16 @@ final class OfferDiagnostics
             }
         }
 
+        // Zeitfenster brauchen ein Ende, sonst verhalten sie sich wie feste Startzeiten
+        if ($plan->window) {
+            $slots = [...($plan->defaultSlots ?? []), ...array_merge(...array_map(static fn ($season): array => $season->slots, $plan->seasons))];
+            $missing = array_filter($slots, static fn ($slot): bool => null === $slot->ends);
+
+            if ([] !== $missing) {
+                $warnings[] = ['key' => 'window_without_end', 'params' => [(string) \count($missing)]];
+            }
+        }
+
         if ($this->resolver->hasEnded($plan, $now)) {
             $warnings[] = ['key' => 'ended', 'params' => []];
         } elseif (null !== $plan->validFrom && $plan->validFrom > $now->format('Y-m-d')) {

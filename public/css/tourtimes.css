@@ -10,6 +10,7 @@
   --tourtimes-cancelled: #b00020;
   --tourtimes-changed: #8a5a00;
   --tourtimes-extra: #1b6e3a;
+  --tourtimes-running: #1b6e3a;
   --tourtimes-badge-bg: rgb(0 0 0 / 6%);
 }
 
@@ -115,6 +116,12 @@
 .tourtimes-badge--cancelled { color: var(--tourtimes-cancelled); }
 .tourtimes-badge--changed { color: var(--tourtimes-changed); }
 .tourtimes-badge--extra { color: var(--tourtimes-extra); }
+
+/* Zeitfenster, das gerade läuft ("jetzt möglich bis …") */
+.tourtimes-date--running .tourtimes-date__time,
+.tourtimes-today__item--running .tourtimes-today__time {
+  color: var(--tourtimes-running);
+}
 
 .tourtimes-date--cancelled .tourtimes-date__time,
 .tourtimes-today__item--cancelled .tourtimes-today__time,

@@ -24,6 +24,7 @@ final readonly class Occurrence
      * @param string                 $state         SCHEDULED, CHANGED, EXTRA oder CANCELLED
      * @param DateTimeImmutable|null $originalStart ursprünglicher Beginn bei verschobenen Terminen
      * @param list<string>           $notes         Hinweise (Slot, Ausnahmen, Absagegrund)
+     * @param bool                   $window        Zeitfenster: Start jederzeit zwischen Beginn und Ende
      */
     public function __construct(
         public int $offerId,
@@ -33,7 +34,24 @@ final readonly class Occurrence
         public string $state = self::SCHEDULED,
         public ?DateTimeImmutable $originalStart = null,
         public array $notes = [],
+        public bool $window = false,
     ) {
+    }
+
+    /**
+     * Bis wann der Termin wahrgenommen werden kann: bei Zeitfenstern das Ende, sonst der Beginn.
+     */
+    public function until(): DateTimeImmutable
+    {
+        return $this->window && null !== $this->end ? $this->end : $this->start;
+    }
+
+    /**
+     * Läuft ein Zeitfenster gerade?
+     */
+    public function isRunning(DateTimeImmutable $now): bool
+    {
+        return $this->window && null !== $this->end && $this->start <= $now && $now < $this->end;
     }
 
     public function isCancelled(): bool
@@ -49,6 +67,6 @@ final readonly class Occurrence
             $notes[] = $reason;
         }
 
-        return new self($this->offerId, $this->slotId, $this->start, $this->end, self::CANCELLED, $this->originalStart, $notes);
+        return new self($this->offerId, $this->slotId, $this->start, $this->end, self::CANCELLED, $this->originalStart, $notes, $this->window);
     }
 }

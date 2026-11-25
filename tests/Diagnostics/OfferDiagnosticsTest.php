@@ -63,4 +63,12 @@ final class OfferDiagnosticsTest extends TestCase
 
         self::assertSame(['cancellation_active', 'cancellation_planned', 'no_upcoming'], $this->keys($plan));
     }
+
+    public function testWindowWithoutEnd(): void
+    {
+        $plan = new OfferPlan(1, [new TimeSlot(1, [1], '10:00', '12:00'), new TimeSlot(2, [3], '14:00')], window: true);
+
+        self::assertSame(['window_without_end'], $this->keys($plan));
+        self::assertSame([], $this->keys(new OfferPlan(1, [new TimeSlot(2, [3], '14:00')])), 'feste Startzeit braucht kein Ende');
+    }
 }

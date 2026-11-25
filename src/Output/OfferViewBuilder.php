@@ -17,7 +17,7 @@ use Derkosmonaut\TourTimesBundle\Resolver\OccurrenceResolver;
  *
  * @phpstan-import-type Offer from OfferRepository
  *
- * @phpstan-type OccurrenceView array{start: DateTimeImmutable, end: DateTimeImmutable|null, state: string, cancelled: bool, changed: bool, extra: bool, originalStart: DateTimeImmutable|null, notes: list<string>, hideAt: DateTimeImmutable, weekday: int, isToday: bool, isTomorrow: bool}
+ * @phpstan-type OccurrenceView array{start: DateTimeImmutable, end: DateTimeImmutable|null, state: string, cancelled: bool, changed: bool, extra: bool, originalStart: DateTimeImmutable|null, notes: list<string>, window: bool, running: bool, until: DateTimeImmutable, hideAt: DateTimeImmutable, weekday: int, isToday: bool, isTomorrow: bool}
  */
 class OfferViewBuilder
 {
@@ -106,8 +106,11 @@ class OfferViewBuilder
         $nextChange = self::nextDay($now);
 
         foreach ($entries as $entry) {
-            if ($entry['hideAt'] > $now && $entry['hideAt'] < $nextChange) {
-                $nextChange = $entry['hideAt'];
+            // ausgeblendet wird bei hideAt; ein Zeitfenster wechselt außerdem bei Beginn auf "jetzt möglich"
+            foreach ([$entry['hideAt'], $entry['window'] ? $entry['start'] : null] as $moment) {
+                if (null !== $moment && $moment > $now && $moment < $nextChange) {
+                    $nextChange = $moment;
+                }
             }
         }
 
@@ -232,7 +235,7 @@ class OfferViewBuilder
     }
 
     /**
-     * Frühester Beginn eines angezeigten Termins oder der nächste Tag:
+     * Frühester Beginn (Zeitfenster: Ende) eines angezeigten Termins oder der nächste Tag:
      * danach muss die Liste der nächsten Termine neu berechnet werden.
      *
      * @param list<array<string, mixed>> $offers Ergebnis von buildOffers()
@@ -243,8 +246,11 @@ class OfferViewBuilder
 
         foreach ($offers as $offer) {
             foreach ($offer['upcoming'] ?? [] as $occurrence) {
-                if ($occurrence['start'] > $now && $occurrence['start'] < $next) {
-                    $next = $occurrence['start'];
+                // die nächste Änderung: ein Termin beginnt bzw. ein Zeitfenster beginnt oder endet
+                foreach ([$occurrence['start'], $occurrence['until'] ?? null] as $moment) {
+                    if (null !== $moment && $moment > $now && $moment < $next) {
+                        $next = $moment;
+                    }
                 }
             }
         }
@@ -278,6 +284,9 @@ class OfferViewBuilder
             'extra' => Occurrence::EXTRA === $occurrence->state,
             'originalStart' => $occurrence->originalStart,
             'notes' => $occurrence->notes,
+            'window' => $occurrence->window && null !== $occurrence->end,
+            'running' => $occurrence->isRunning($now),
+            'until' => $occurrence->until(),
             'hideAt' => OccurrenceResolver::hideAt($occurrence, $offsetMinutes),
             'weekday' => (int) $occurrence->start->format('N'),
             'isToday' => $day === $now->format('Y-m-d'),

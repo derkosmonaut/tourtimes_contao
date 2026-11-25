@@ -1,6 +1,17 @@
 {# Ein Eintrag der Tagesliste. Erwartet: entry, labels #}
+{#
+  Feste Startzeit: "10:00 Uhr". Zeitfenster: "10:00–12:00 Uhr", während es läuft
+  "jetzt möglich bis 12:00 Uhr".
+#}
 <time class="tourtimes-today__time" datetime="{{ entry.start|date('Y-m-d\\TH:i') }}">
-  {{- entry.start|date('H:i') }}{% if labels.time_suffix %} {{ labels.time_suffix }}{% endif -%}
+  {%- if entry.running -%}
+    {{ labels.running_until }} {{ entry.end|date('H:i') }}
+  {%- elseif entry.window -%}
+    {{ entry.start|date('H:i') }}–{{ entry.end|date('H:i') }}
+  {%- else -%}
+    {{ entry.start|date('H:i') }}
+  {%- endif -%}
+  {% if labels.time_suffix %} {{ labels.time_suffix }}{% endif -%}
 </time>
 
 <span class="tourtimes-today__offer">
@@ -9,6 +20,10 @@
 
 {% if entry.offer.meetingPoint %}
   <span class="tourtimes-today__meeting-point">{{ labels.meeting_point }}: {{ entry.offer.meetingPoint }}</span>
+{% endif %}
+
+{% if entry.window and not entry.running and not entry.cancelled %}
+  <span class="tourtimes-badge tourtimes-badge--window">{{ labels.window }}</span>
 {% endif %}
 
 {% if entry.cancelled %}

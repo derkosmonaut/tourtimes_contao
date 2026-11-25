@@ -21,7 +21,7 @@
   <div class="tourtimes-today" data-tourtimes-today data-tourtimes-reload-at="{{ reload_at|date('U') }}">
     <ol class="tourtimes-today__list">
       {% for entry in entries %}
-        <li class="tourtimes-today__item tourtimes-today__item--{{ entry.state }}" data-tourtimes-hide-at="{{ entry.hideAt|date('U') }}">
+        <li class="tourtimes-today__item tourtimes-today__item--{{ entry.state }}{% if entry.window %} tourtimes-today__item--window{% endif %}{% if entry.running %} tourtimes-today__item--running{% endif %}" data-tourtimes-hide-at="{{ entry.hideAt|date('U') }}">
           {% include "@Contao/tourtimes/_today_entry.html.twig" %}
         </li>
       {% endfor %}
@@ -41,7 +41,7 @@
         </span>
         <ol class="tourtimes-today__list">
           {% for entry in next_day.entries %}
-            <li class="tourtimes-today__item tourtimes-today__item--{{ entry.state }}">
+            <li class="tourtimes-today__item tourtimes-today__item--{{ entry.state }}{% if entry.window %} tourtimes-today__item--window{% endif %}">
               {% include "@Contao/tourtimes/_today_entry.html.twig" %}
             </li>
           {% endfor %}

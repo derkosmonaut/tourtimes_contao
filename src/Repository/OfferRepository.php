@@ -121,7 +121,7 @@ class OfferRepository
         }
 
         $range = $this->connection->fetchAssociative(
-            'SELECT date_from, date_until, max_dates, holiday_region FROM tl_tt_offer WHERE id = ?',
+            'SELECT date_from, date_until, max_dates, holiday_region, time_mode FROM tl_tt_offer WHERE id = ?',
             [$offerId],
         ) ?: [];
 
@@ -144,6 +144,7 @@ class OfferRepository
             $validUntil,
             (int) ($range['max_dates'] ?? 0),
             $this->holidays((string) ($range['holiday_region'] ?? ''), $timezone),
+            'window' === ($range['time_mode'] ?? ''),
         );
     }
 

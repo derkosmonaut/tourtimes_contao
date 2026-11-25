@@ -53,7 +53,7 @@ $GLOBALS['TL_DCA']['tl_tt_offer'] = [
         ],
     ],
     'palettes' => [
-        'default' => '{title_legend},title,alias;{text_legend},teaser,description;{image_legend},singleSRC;{details_legend},meeting_point,duration,price,language;{period_legend},date_from,date_until,max_dates,holiday_region;{ticket_legend},ticket_url,ticket_label;{publish_legend},published;{preview_legend},tourtimes_preview',
+        'default' => '{title_legend},title,alias;{text_legend},teaser,description;{image_legend},singleSRC;{details_legend},time_mode,meeting_point,duration,price,language;{period_legend},date_from,date_until,max_dates,holiday_region;{ticket_legend},ticket_url,ticket_label;{publish_legend},published;{preview_legend},tourtimes_preview',
     ],
     'fields' => [
         'id' => [
@@ -92,6 +92,15 @@ $GLOBALS['TL_DCA']['tl_tt_offer'] = [
             'inputType' => 'fileTree',
             'eval' => ['filesOnly' => true, 'fieldType' => 'radio', 'extensions' => '%contao.image.valid_extensions%', 'tl_class' => 'clr'],
             'sql' => 'binary(16) NULL',
+        ],
+        // start = feste Startzeit (Führung), window = Zeitfenster, Start jederzeit (z. B. Audioguide)
+        'time_mode' => [
+            'inputType' => 'select',
+            'options' => ['start', 'window'],
+            'reference' => &$GLOBALS['TL_LANG']['tl_tt_offer']['time_modes'],
+            'filter' => true,
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => "varchar(8) NOT NULL default 'start'",
         ],
         'meeting_point' => [
             'inputType' => 'text',

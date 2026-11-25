@@ -28,13 +28,20 @@ final readonly class Cancellation
     ) {
     }
 
+    /**
+     * Feste Startzeit: der Beginn liegt im Zeitraum. Zeitfenster: Fenster und Zeitraum überschneiden sich.
+     */
     public function covers(Occurrence $occurrence): bool
     {
-        if (!$this->active || $occurrence->start < $this->start) {
+        if (!$this->active) {
             return false;
         }
 
-        if (null !== $this->stop && $occurrence->start >= $this->stop) {
+        if ($occurrence->window && null !== $occurrence->end) {
+            if ($occurrence->end <= $this->start || (null !== $this->stop && $occurrence->start >= $this->stop)) {
+                return false;
+            }
+        } elseif ($occurrence->start < $this->start || (null !== $this->stop && $occurrence->start >= $this->stop)) {
             return false;
         }
 

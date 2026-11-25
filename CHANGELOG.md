@@ -2,6 +2,9 @@
 
 ## Unveröffentlicht
 
+### Neu
+- „Art der Termine“ je Angebot: feste Startzeit (wie bisher) oder Zeitfenster mit Start jederzeit (z. B. Audioguide 10–12 Uhr). Zeitfenster zeigen überall den Zeitraum, laufende Fenster „jetzt möglich bis …“, verschwinden erst am Ende (Versatz zählt vom Ende) und gelten als abgesagt, sobald eine spontane Absage sie berührt. Die Backend-Vorschau warnt bei Zeitslots ohne Ende. Neue Spalte `time_mode` in `tl_tt_offer`
+
 ### Geändert
 - Angebotsliste: „Lesermodul“ ersetzt durch „In der Detailansicht ausblenden“ (auch für „Termine heute“). Liste und Detailansicht werden beide frei auf der Seite eingebunden; die Liste verschwindet, sobald ein Angebot aufgerufen ist. Eine Migration setzt den Haken überall, wo ein Lesermodul eingetragen war. **Das Detailmodul muss danach selbst auf der Seite eingebunden werden.**
 
