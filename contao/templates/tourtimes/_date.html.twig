@@ -1,8 +1,8 @@
 {#
   Ein Termin. Erwartet: date (Termin), labels; optional show_day (Datum voranstellen).
-  Zustände als Modifier-Klasse: --scheduled, --changed, --extra, --cancelled
+  Zustände als Modifier-Klasse: --scheduled, --changed, --extra, --cancelled, dazu --window und --running
 #}
-<span class="tourtimes-date tourtimes-date--{{ date.state }}">
+<span class="tourtimes-date tourtimes-date--{{ date.state }}{% if date.window %} tourtimes-date--window{% endif %}{% if date.running %} tourtimes-date--running{% endif %}">
   {% if show_day|default(false) %}
     <span class="tourtimes-date__day">
       {%- if date.isToday -%}
@@ -16,8 +16,17 @@
   {% endif %}
 
   <time class="tourtimes-date__time" datetime="{{ date.start|date('Y-m-d\\TH:i') }}">
-    {{- date.start|date('H:i') }}{% if date.end %}–{{ date.end|date('H:i') }}{% endif %}{% if labels.time_suffix %} {{ labels.time_suffix }}{% endif -%}
+    {%- if date.running -%}
+      {{ labels.running_until }} {{ date.end|date('H:i') }}
+    {%- else -%}
+      {{ date.start|date('H:i') }}{% if date.end %}–{{ date.end|date('H:i') }}{% endif %}
+    {%- endif -%}
+    {% if labels.time_suffix %} {{ labels.time_suffix }}{% endif -%}
   </time>
+
+  {% if date.window and not date.running and not date.cancelled %}
+    <span class="tourtimes-badge tourtimes-badge--window">{{ labels.window }}</span>
+  {% endif %}
 
   {% if date.cancelled %}
     <span class="tourtimes-badge tourtimes-badge--cancelled">{{ labels.cancelled }}</span>

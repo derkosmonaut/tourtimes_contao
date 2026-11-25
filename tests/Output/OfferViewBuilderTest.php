@@ -194,4 +194,32 @@ final class OfferViewBuilderTest extends TestCase
         self::assertTrue($views[0]['ended']);
         self::assertSame('2026-11-09', $views[0]['validUntil']?->format('Y-m-d'), 'Tag des letzten Termins');
     }
+
+    public function testTodayWithWindow(): void
+    {
+        $plan = new OfferPlan(8, [new TimeSlot(1, [1], '10:00', '12:00')], [], [], [], 60, window: true);
+        $repository = new class($plan) extends OfferRepository {
+            public function __construct(private readonly OfferPlan $plan)
+            {
+            }
+
+            public function loadPlan(int $offerId, int $duration, DateTimeZone $timezone): OfferPlan
+            {
+                return $this->plan;
+            }
+        };
+        $builder = new OfferViewBuilder($repository, new OccurrenceResolver());
+        $offer = [['id' => 8, 'title' => 'Audioguide', 'duration' => 60, 'alias' => '']];
+
+        $before = $builder->buildToday($offer, $this->at('2026-11-16 09:00'), 10, true);
+        self::assertTrue($before['entries'][0]['window']);
+        self::assertFalse($before['entries'][0]['running']);
+        self::assertSame('10:00', $before['nextChange']->format('H:i'), 'Cache läuft zum Fensterbeginn ab');
+
+        $during = $builder->buildToday($offer, $this->at('2026-11-16 11:00'), 10, true);
+        self::assertTrue($during['entries'][0]['running']);
+        self::assertSame('11:50', $during['nextChange']->format('H:i'));
+
+        self::assertSame([], $builder->buildToday($offer, $this->at('2026-11-16 11:50'), 10, true)['entries']);
+    }
 }

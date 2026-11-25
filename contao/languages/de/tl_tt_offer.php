@@ -7,8 +7,10 @@ $GLOBALS['TL_LANG']['tl_tt_offer']['alias'] = ['Alias', 'URL-Teil der Detailseit
 $GLOBALS['TL_LANG']['tl_tt_offer']['teaser'] = ['Kurzbeschreibung', 'Erscheint in der Liste.'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['description'] = ['Beschreibung', 'Ausführlicher Text für die Detailansicht.'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['singleSRC'] = ['Bild', 'Optionales Bild zum Angebot.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['time_mode'] = ['Art der Termine', 'Feste Startzeit: der Termin beginnt zur angegebenen Uhrzeit und verschwindet dann. Zeitfenster: Start jederzeit zwischen Beginn und Ende (z. B. Audioguide 10–12 Uhr), der Termin bleibt bis zum Ende sichtbar. Zeitfenster brauchen ein Ende am Zeitslot.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['time_modes'] = ['start' => 'Feste Startzeit (z. B. Führung)', 'window' => 'Zeitfenster, Start jederzeit (z. B. Audioguide)'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['meeting_point'] = ['Treffpunkt', 'Z. B. „Hauptportal“.'];
-$GLOBALS['TL_LANG']['tl_tt_offer']['duration'] = ['Dauer in Minuten', 'Gilt für alle Termine ohne eigenes Ende. 0 = ohne Ende.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['duration'] = ['Dauer in Minuten', 'Feste Startzeit: gilt für alle Termine ohne eigenes Ende. Zeitfenster: nur Angabe für Besucher (z. B. „ca. 60 Min.“), das Ende kommt aus dem Zeitslot. 0 = keine Angabe.'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['price'] = ['Preis', 'Freitext, z. B. „12 €, ermäßigt 8 €“.'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['language'] = ['Sprache', 'Z. B. „Deutsch“. Abweichungen einzelner Termine als Hinweis am Zeitslot.'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['ticket_url'] = ['Ticketlink', 'Adresse des Ticketshops.'];
@@ -38,6 +40,7 @@ $GLOBALS['TL_LANG']['tl_tt_offer']['warnings'] = [
     'count_not_reached' => 'Die %s Termine werden im Zeitraum nicht erreicht. Es gelten nur die Termine bis „Termine bis“.',
     'cancellation_active' => 'Spontane Absage aktiv: %s',
     'cancellation_planned' => 'Spontane Absage geplant: %s',
+    'window_without_end' => '%s Zeitslot(s) ohne Ende: Bei Zeitfenstern wird ein Termin ohne Ende wie eine feste Startzeit behandelt.',
     'no_upcoming' => 'In den nächsten %s Tagen gibt es keinen Termin.',
 ];
 $GLOBALS['TL_LANG']['tl_tt_offer']['title_legend'] = 'Angebot';

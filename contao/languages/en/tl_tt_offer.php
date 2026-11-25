@@ -7,8 +7,10 @@ $GLOBALS['TL_LANG']['tl_tt_offer']['alias'] = ['Alias', 'URL part of the detail 
 $GLOBALS['TL_LANG']['tl_tt_offer']['teaser'] = ['Teaser', 'Shown in the list.'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['description'] = ['Description', 'Full text for the detail view.'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['singleSRC'] = ['Image', 'Optional image of the offer.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['time_mode'] = ['Type of dates', 'Fixed start time: the date starts at the given time and then disappears. Time window: start any time between start and end (e.g. audio guide 10–12), the date stays visible until the end. Time windows need an end on the time slot.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['time_modes'] = ['start' => 'Fixed start time (e.g. guided tour)', 'window' => 'Time window, start any time (e.g. audio guide)'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['meeting_point'] = ['Meeting point', 'E.g. "Main entrance".'];
-$GLOBALS['TL_LANG']['tl_tt_offer']['duration'] = ['Duration in minutes', 'Used for all dates without an end time. 0 = no end.'];
+$GLOBALS['TL_LANG']['tl_tt_offer']['duration'] = ['Duration in minutes', 'Fixed start time: used for all dates without an end. Time window: information for visitors only (e.g. "approx. 60 min"), the end comes from the time slot. 0 = not shown.'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['price'] = ['Price', 'Free text, e.g. "€12, reduced €8".'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['language'] = ['Language', 'E.g. "German". Add differences of single dates as a note on the time slot.'];
 $GLOBALS['TL_LANG']['tl_tt_offer']['ticket_url'] = ['Ticket link', 'Address of the ticket shop.'];
@@ -38,6 +40,7 @@ $GLOBALS['TL_LANG']['tl_tt_offer']['warnings'] = [
     'count_not_reached' => 'The %s dates are not reached within the period. Only the dates until "Dates until" apply.',
     'cancellation_active' => 'Short-notice cancellation active: %s',
     'cancellation_planned' => 'Short-notice cancellation planned: %s',
+    'window_without_end' => '%s time slot(s) without an end: in time window mode a date without an end is treated like a fixed start time.',
     'no_upcoming' => 'There is no date in the next %s days.',
 ];
 $GLOBALS['TL_LANG']['tl_tt_offer']['title_legend'] = 'Offer';

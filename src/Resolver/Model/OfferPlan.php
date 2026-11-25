@@ -20,6 +20,9 @@ final readonly class OfferPlan
      * @param string|null         $validUntil   letzter möglicher Tag als "Y-m-d"; null = unbegrenzt
      * @param int                 $maxDates     Angebot endet nach so vielen Terminen ab $validFrom (0 = unbegrenzt).
      *                                          Jeder Termin zählt, auch abgesagte und Zusatztermine.
+     * @param bool                $window       Zeitfenster statt fester Startzeit (z. B. Audioguide 10–12 Uhr):
+     *                                          Termine gelten bis zum Ende, ohne Ende wie feste Startzeit;
+     *                                          die Dauer bestimmt dann kein Ende
      * @param list<string>        $holidays     Feiertage als "Y-m-d": keine regulären Termine, sofern keine
      *                                          Ausnahme (Verschiebung, Hinweis) den Slot an diesem Tag bestätigt
      */
@@ -34,6 +37,7 @@ final readonly class OfferPlan
         public ?string $validUntil = null,
         public int $maxDates = 0,
         public array $holidays = [],
+        public bool $window = false,
     ) {
     }
 }
