@@ -8,6 +8,7 @@ use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\CoreBundle\Image\Studio\Studio;
 use Contao\CoreBundle\Routing\ContentUrlGenerator;
+use Contao\Input;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\StringUtil;
@@ -39,6 +40,16 @@ abstract class AbstractTourTimesController extends AbstractFrontendModuleControl
         System::loadLanguageFile('tourtimes');
 
         return $GLOBALS['TL_LANG']['tourtimes'] ?? [];
+    }
+
+    /**
+     * "In der Detailansicht ausblenden": ist ein Angebot aufgerufen, bleibt das Modul leer.
+     * Der Alias wird dabei nicht als verwendet markiert, das übernimmt die Detailansicht.
+     */
+    protected function hiddenInReader(ModuleModel $model): bool
+    {
+        return '' !== (string) ($model->row()['tourtimes_hide_in_reader'] ?? '')
+            && '' !== (string) Input::get('auto_item', false, true);
     }
 
     /**

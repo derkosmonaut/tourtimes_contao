@@ -7,7 +7,7 @@ $dca = &$GLOBALS['TL_DCA']['tl_module'];
 // Liste aller Angebote mit regelmäßigen Zeiten und den nächsten Terminen
 $dca['palettes']['tourtimes_list'] =
     '{title_legend},name,headline,type;'
-    .'{tourtimes_legend},tourtimes_offers,tourtimes_upcoming,tourtimes_show_cancelled,tourtimes_jsonld,jumpTo,tourtimes_readerModule;'
+    .'{tourtimes_legend},tourtimes_offers,tourtimes_upcoming,tourtimes_show_cancelled,tourtimes_jsonld,jumpTo,tourtimes_hide_in_reader;'
     .'{image_legend:hide},imgSize;'
     .'{template_legend:hide},customTpl;'
     .'{protected_legend:hide},protected;'
@@ -16,7 +16,7 @@ $dca['palettes']['tourtimes_list'] =
 // Termine des aktuellen Tages, z. B. für den Infomonitor an der Kasse
 $dca['palettes']['tourtimes_today'] =
     '{title_legend},name,headline,type;'
-    .'{tourtimes_legend},tourtimes_offers,tourtimes_offset,tourtimes_show_cancelled,tourtimes_empty,tourtimes_show_next,jumpTo;'
+    .'{tourtimes_legend},tourtimes_offers,tourtimes_offset,tourtimes_show_cancelled,tourtimes_empty,tourtimes_show_next,jumpTo,tourtimes_hide_in_reader;'
     .'{template_legend:hide},customTpl;'
     .'{protected_legend:hide},protected;'
     .'{expert_legend:hide},guests,cssID';
@@ -79,11 +79,11 @@ $dca['fields']['tourtimes_show_next'] = [
     'sql' => "char(1) NOT NULL default ''",
 ];
 
-// Lesermodul: ist ein Angebot aufgerufen, zeigt die Liste stattdessen die Detailansicht (Optionen: ReaderModuleOptionsListener)
-$dca['fields']['tourtimes_readerModule'] = [
-    'inputType' => 'select',
-    'eval' => ['includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w50'],
-    'sql' => 'int(10) unsigned NOT NULL default 0',
+// Liste und Tagesliste blenden sich aus, sobald ein Angebot aufgerufen ist (Detailansicht auf derselben Seite)
+$dca['fields']['tourtimes_hide_in_reader'] = [
+    'inputType' => 'checkbox',
+    'eval' => ['tl_class' => 'w50 m12'],
+    'sql' => "char(1) NOT NULL default ''",
 ];
 
 unset($dca);

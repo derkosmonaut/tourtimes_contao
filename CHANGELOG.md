@@ -2,6 +2,13 @@
 
 ## Unveröffentlicht
 
+### Geändert
+- Angebotsliste: „Lesermodul“ ersetzt durch „In der Detailansicht ausblenden“ (auch für „Termine heute“). Liste und Detailansicht werden beide frei auf der Seite eingebunden; die Liste verschwindet, sobald ein Angebot aufgerufen ist. Eine Migration setzt den Haken überall, wo ein Lesermodul eingetragen war. **Das Detailmodul muss danach selbst auf der Seite eingebunden werden.**
+
+### Behoben
+- Detailansicht erschien doppelt, wenn sie zusätzlich zum Lesermodul der Liste auf der Seite stand. Ein Angebot wird jetzt je Seitenaufruf nur einmal ausgegeben
+
+### Sonstiges
 - Logo, Paket-Metadaten für den Contao Manager (`docs/package-metadata/`) und Screenshots im README
 
 ## 0.1.0 – 2026-11-20 (Release Candidate)
