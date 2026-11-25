@@ -13,6 +13,9 @@ services:
     Derkosmonaut\TourTimesBundle\Diagnostics\:
         resource: ../src/Diagnostics/
 
+    Derkosmonaut\TourTimesBundle\Migration\:
+        resource: ../src/Migration/
+
     Derkosmonaut\TourTimesBundle\Repository\:
         resource: ../src/Repository/
 

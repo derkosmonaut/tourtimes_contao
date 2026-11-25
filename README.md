@@ -76,16 +76,21 @@ Alle Termine, die im Zeitraum beginnen, fallen aus. Zum Aufheben „Aktiv“ abw
 **5. Ausgabe.** Frontend-Modul anlegen und einbinden:
 
 - *Angebotsliste*: Angebote auswählen (ohne Auswahl alle), Anzahl nächster Termine, Weiterleitungsseite zur Detailansicht.
-  Optional ein *Lesermodul*: Ist ein Angebot aufgerufen, zeigt die Liste stattdessen die Detailansicht (Liste und Detail auf einer Seite)
+  Mit „In der Detailansicht ausblenden“ verschwindet die Liste, sobald ein Angebot aufgerufen ist
 - *Termine heute*: Angebote, Versatz in Minuten, abgesagte Termine anzeigen oder ausblenden, Text ohne Termine.
-  Mit „Nächsten Tag anzeigen“ erscheinen nach dem Hinweis die Termine des nächsten Tages mit Terminen (z. B. „Morgen“)
+  Mit „Nächsten Tag anzeigen“ erscheinen nach dem Hinweis die Termine des nächsten Tages mit Terminen (z. B. „Morgen“).
+  „In der Detailansicht ausblenden“ gibt es hier ebenfalls
 - *Detailansicht*: auf der Weiterleitungsseite einbinden; das Angebot kommt über den Alias in der URL.
   „Anzahl nächster Termine“ = 0 blendet die Terminliste auf der Detailseite aus
 
 ![Einstellungen des Moduls „Angebot-Detailansicht“](docs/screenshots/modul-detailansicht.png)
 
-Für die Sitemap zählen die Weiterleitungsseiten der Module „Angebotsliste“ und „Termine heute“. Liegen Liste und Detail
-auf einer Seite (Lesermodul), trage diese Seite auch als Weiterleitungsseite ein.
+**Liste und Detail auf einer Seite:** Angebotsliste und Detailansicht beide auf der Seite einbinden, diese Seite als
+Weiterleitungsseite der Liste eintragen und in der Liste „In der Detailansicht ausblenden“ aktivieren. Ohne aufgerufenes
+Angebot bleibt die Detailansicht leer, mit Angebot verschwindet die Liste. Ein Angebot wird je Seitenaufruf nur einmal
+ausgegeben, auch wenn die Detailansicht mehrfach eingebunden ist.
+
+Für die Sitemap zählen die Weiterleitungsseiten der Module „Angebotsliste“ und „Termine heute“.
 
 Abgesagte Termine erscheinen durchgestrichen mit „Fällt aus“ und Grund, wenn „Abgesagte Termine anzeigen“ aktiv ist.
 

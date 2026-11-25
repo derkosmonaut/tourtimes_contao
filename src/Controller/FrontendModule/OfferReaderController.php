@@ -18,6 +18,7 @@ use DateTimeImmutable;
 use Derkosmonaut\TourTimesBundle\Output\OfferViewBuilder;
 use Derkosmonaut\TourTimesBundle\Repository\OfferRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -26,6 +27,8 @@ use Symfony\Component\HttpFoundation\Response;
 #[AsFrontendModule(type: 'tourtimes_reader', category: 'tourtimes', template: 'frontend_module/tourtimes_reader')]
 class OfferReaderController extends AbstractTourTimesController
 {
+    private const RENDERED = '_tourtimes_reader_rendered';
+
     public function __construct(
         OfferRepository $repository,
         OfferViewBuilder $viewBuilder,
@@ -33,6 +36,7 @@ class OfferReaderController extends AbstractTourTimesController
         Studio $studio,
         private readonly ResponseContextAccessor $responseContextAccessor,
         private readonly HtmlDecoder $htmlDecoder,
+        private readonly RequestStack $requestStack,
     ) {
         parent::__construct($repository, $viewBuilder, $urlGenerator, $studio);
     }
@@ -45,6 +49,17 @@ class OfferReaderController extends AbstractTourTimesController
         // ohne Alias (z. B. Seite direkt aufgerufen) bleibt das Modul leer
         if ('' === $alias) {
             return new Response();
+        }
+
+        // ein Angebot nur einmal je Seitenaufruf ausgeben, auch wenn das Modul mehrfach eingebunden ist
+        $main = $this->requestStack->getMainRequest();
+
+        if (null !== $main) {
+            if ($main->attributes->get(self::RENDERED) === $alias) {
+                return new Response();
+            }
+
+            $main->attributes->set(self::RENDERED, $alias);
         }
 
         $offer = $this->repository->findPublishedByAlias($alias);

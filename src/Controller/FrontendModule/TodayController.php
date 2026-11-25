@@ -24,6 +24,10 @@ class TodayController extends AbstractTourTimesController
 {
     protected function getResponse(FragmentTemplate $template, ModuleModel $model, Request $request): Response
     {
+        if ($this->hiddenInReader($model)) {
+            return new Response();
+        }
+
         $now = new DateTimeImmutable('now', OfferViewBuilder::timezone());
         $labels = $this->labels();
         $offset = (int) $model->row()['tourtimes_offset'];
